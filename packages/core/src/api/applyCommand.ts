@@ -43,13 +43,15 @@ function canStartGame(state: GameState): boolean {
     return false;
   }
 
-  if (state.players.length < 2) {
+  const connectedPlayers = state.players.filter(
+    (player) => player.isConnected === true,
+  );
+
+  if (connectedPlayers.length === 0) {
     return false;
   }
 
-  return state.players.every(
-    (player) => player.isConnected === true && player.isReady === true,
-  );
+  return connectedPlayers.every((player) => player.isReady === true);
 }
 
 function createBettingRound(state: GameState, now: number): RoundState {
@@ -209,14 +211,21 @@ export function applyCommand(
         lastWin: 0,
       }));
 
+      const startedPlayerCount = nextPlayers.filter(
+        (player) =>
+          player.isConnected === true && player.isEliminated === false,
+      ).length;
+
       return {
         ...state,
         status: "running",
         players: nextPlayers,
+        startedPlayerCount,
         round: createBettingRound(
           {
             ...state,
             players: nextPlayers,
+            startedPlayerCount,
           },
           command.now,
         ),

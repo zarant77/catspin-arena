@@ -3,8 +3,6 @@ import App from "./App";
 import { StoreProvider } from "./state/storeContext";
 import { startAnimatedPawFavicon } from "./components/favicon/animatedFavicon";
 
-import "./styles/app.css";
-
 startAnimatedPawFavicon();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

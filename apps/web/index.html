@@ -6,10 +6,120 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CatSpin Arena</title>
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+
+  <style>
+    #splash {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at top, #2b1d52, #09050f);
+      color: #fff4d6;
+      z-index: 9999;
+      cursor: pointer;
+    }
+
+    .splash-content {
+      text-align: center;
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .logo {
+      font-size: 72px;
+      margin-bottom: 10px;
+    }
+
+    .title {
+      font-size: 38px;
+      font-weight: 800;
+    }
+
+    .subtitle {
+      margin-top: 8px;
+      opacity: 0.8;
+    }
+
+    .hint {
+      margin-top: 20px;
+      font-size: 14px;
+      opacity: 0.5;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <div id="splash">
+    <div class="splash-content">
+      <div class="logo">🐱</div>
+      <div class="title">CatSpin Arena</div>
+      <div class="subtitle">Bet. Spin. Survive.</div>
+      <div class="hint">Click to continue</div>
+    </div>
+  </div>
+
   <div id="root"></div>
+
+  <script>
+    (function () {
+      const splash = document.getElementById("splash");
+      let splashSound = null;
+
+      if (!localStorage.getItem('catspin.playerId')) {
+        splashSound = new Audio("./assets/welcome.mp3");
+        splashSound.preload = "auto";
+        splashSound.volume = 1;
+      }
+
+      let isClosing = false;
+
+      function removeSplash() {
+        if (!splash || isClosing) {
+          return;
+        }
+
+        isClosing = true;
+
+        const fadeOutAndRemove = () => {
+          splash.style.opacity = "0";
+          splash.style.transition = "opacity 500ms ease";
+
+          window.setTimeout(() => {
+            splash.remove();
+            document.body.style.overflow = "";
+          }, 300);
+        };
+
+        if (splashSound) {
+          splashSound.currentTime = 0;
+          splashSound.play().catch(() => { });
+        }
+
+        setTimeout(() => fadeOutAndRemove(), 500);
+      }
+
+      if (window.location.hash && window.location.hash.length > 1) {
+        removeSplash();
+        return;
+      }
+
+      if (splash) {
+        splash.addEventListener("click", removeSplash);
+      }
+    })();
+  </script>
+
   <script type="module" src="/src/main.tsx"></script>
 </body>
 

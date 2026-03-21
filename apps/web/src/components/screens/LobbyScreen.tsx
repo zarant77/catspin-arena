@@ -29,54 +29,45 @@ export function LobbyScreen(props: LobbyScreenProps) {
   return (
     <>
       <Section title="Lobby">
-        <p>
-          Room: <strong>{room.id}</strong>
-        </p>
+        <div className="lobby-screen">
+          <div className="room-code">Room code: {room.id}</div>
 
-        <p>
-          Game status: <strong>{room.game.status}</strong>
-        </p>
+          <div className="actions">
+            <button
+              type="button"
+              onClick={onToggleReady}
+              disabled={currentPlayer === null}
+            >
+              {currentPlayer?.isReady ? "Unready" : "Ready"}
+            </button>
 
-        <p>
-          Round: <strong>{room.game.round.index}</strong>
-        </p>
+            {isHost && (
+              <button type="button" onClick={onStartGame}>
+                Start game
+              </button>
+            )}
 
-        <p>
-          Round status: <strong>{room.game.round.status}</strong>
-        </p>
-
-        <div
-          style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 12 }}
-        >
-          <button
-            type="button"
-            onClick={onToggleReady}
-            disabled={currentPlayer === null}
-          >
-            {currentPlayer?.isReady ? "Unset ready" : "Set ready"}
-          </button>
-
-          <button type="button" onClick={onStartGame} disabled={!isHost}>
-            Start game
-          </button>
-
-          <button type="button" onClick={onLeaveRoom}>
-            Leave room
-          </button>
+            <button type="button" onClick={onLeaveRoom}>
+              Leave room
+            </button>
+          </div>
         </div>
       </Section>
 
       <Section title="Players">
-        <ul style={{ paddingLeft: 20 }}>
-          {players.map((player) => (
-            <PlayerItem
-              key={player.id}
-              player={player}
-              isCurrent={player.id === playerId}
-              isHost={room.game.hostPlayerId === player.id}
-            />
-          ))}
-        </ul>
+        <div className="players-list">
+          <ul>
+            {players.map((player) => (
+              <PlayerItem
+                key={player.id}
+                player={player}
+                isCurrent={player.id === playerId}
+                isHost={room.game.hostPlayerId === player.id}
+                variant="lobby"
+              />
+            ))}
+          </ul>
+        </div>
       </Section>
     </>
   );

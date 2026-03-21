@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { SymbolIdDTO, WinningLineDTO } from "@catspin/protocol";
 import { SLOT_SYMBOL_IDS, SLOT_SYMBOL_VIEW } from "./slotSymbols";
 
@@ -15,6 +15,52 @@ function createRandomGrid(rows: number, cols: number): SymbolIdDTO[][] {
       return SLOT_SYMBOL_IDS[index];
     }),
   );
+}
+
+function transposeGrid(
+  grid: readonly (readonly SymbolIdDTO[])[],
+): SymbolIdDTO[][] {
+  const cols = grid.length;
+  const rows = grid[0]?.length ?? 0;
+
+  return Array.from({ length: rows }, (_, rowIndex) =>
+    Array.from({ length: cols }, (_, colIndex) => grid[colIndex]?.[rowIndex]),
+  );
+}
+
+function isRectangularGrid(grid: readonly (readonly SymbolIdDTO[])[]): boolean {
+  if (grid.length === 0) {
+    return false;
+  }
+
+  const innerLength = grid[0]?.length ?? 0;
+
+  if (innerLength === 0) {
+    return false;
+  }
+
+  return grid.every((row) => row.length === innerLength);
+}
+
+function normalizeGrid(
+  grid: readonly (readonly SymbolIdDTO[])[],
+): SymbolIdDTO[][] | null {
+  if (!isRectangularGrid(grid)) {
+    return null;
+  }
+
+  const outer = grid.length;
+  const inner = grid[0]?.length ?? 0;
+
+  if (outer === 3 && inner === 5) {
+    return grid.map((row) => [...row]);
+  }
+
+  if (outer === 5 && inner === 3) {
+    return transposeGrid(grid);
+  }
+
+  return null;
 }
 
 function getWinningCellSet(
@@ -36,29 +82,37 @@ function getWinningCellSet(
 export function SlotMachine(props: SlotMachineProps) {
   const { grid, isSpinning, winningLines } = props;
 
-  const rows = Math.max(grid.length, 3);
-  const cols = Math.max(grid[0]?.length ?? 0, 5);
-
-  const normalizedGrid = useMemo<SymbolIdDTO[][]>(() => {
-    if (grid.length === 0) {
-      return createRandomGrid(rows, cols);
-    }
-
-    return grid.map((row) => [...row]);
-  }, [cols, grid, rows]);
+  const normalizedGrid = useMemo<SymbolIdDTO[][] | null>(() => {
+    const nextGrid = normalizeGrid(grid);
+    return nextGrid;
+  }, [grid]);
 
   const winningCells = useMemo(() => {
     return getWinningCellSet(winningLines);
   }, [winningLines]);
 
-  const [displayGrid, setDisplayGrid] =
-    useState<SymbolIdDTO[][]>(normalizedGrid);
+  const lastValidGridRef = useRef<SymbolIdDTO[][]>(createRandomGrid(3, 5));
+
+  if (normalizedGrid !== null) {
+    lastValidGridRef.current = normalizedGrid;
+  }
+
+  const [displayGrid, setDisplayGrid] = useState<SymbolIdDTO[][]>(
+    lastValidGridRef.current,
+  );
 
   useEffect(() => {
     if (!isSpinning) {
-      setDisplayGrid(normalizedGrid);
+      if (normalizedGrid !== null) {
+        setDisplayGrid(normalizedGrid);
+      }
+
       return;
     }
+
+    const baseGrid = normalizedGrid ?? lastValidGridRef.current;
+    const rows = baseGrid.length || 3;
+    const cols = baseGrid[0]?.length ?? 5;
 
     const intervalId = window.setInterval(() => {
       setDisplayGrid(createRandomGrid(rows, cols));
@@ -67,59 +121,37 @@ export function SlotMachine(props: SlotMachineProps) {
     return () => {
       window.clearInterval(intervalId);
     };
-  }, [cols, isSpinning, normalizedGrid, rows]);
+  }, [isSpinning, normalizedGrid]);
+
+  const hasRenderableGrid = displayGrid.length > 0;
 
   return (
-    <div
-      style={{
-        display: "inline-grid",
-        gap: 8,
-        padding: 16,
-        borderRadius: 16,
-        border: "2px solid #333",
-        background: "#161616",
-      }}
-    >
-      {displayGrid.map((row, rowIndex) => (
-        <div
-          key={`row-${rowIndex}`}
-          style={{
-            display: "grid",
-            gridTemplateColumns: `repeat(${row.length}, 72px)`,
-            gap: 8,
-          }}
-        >
-          {row.map((symbol, colIndex) => {
-            const isWinningCell =
-              !isSpinning && winningCells.has(`${rowIndex}:${colIndex}`);
+    <div className="slot">
+      {!hasRenderableGrid ? (
+        <div className="slot-empty">No grid</div>
+      ) : (
+        displayGrid.map((row, rowIndex) => (
+          <div
+            key={`row-${rowIndex}`}
+            className="slot-row"
+            style={{ gridTemplateColumns: `repeat(${row.length}, 72px)` }}
+          >
+            {row.map((symbol, colIndex) => {
+              const isWinningCell =
+                !isSpinning && winningCells.has(`${rowIndex}:${colIndex}`);
 
-            return (
-              <div
-                key={`${rowIndex}-${colIndex}`}
-                style={{
-                  width: 72,
-                  height: 72,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 36,
-                  borderRadius: 12,
-                  background: isWinningCell ? "#3a2f12" : "#242424",
-                  border: isWinningCell
-                    ? "2px solid #f5c542"
-                    : "1px solid #444",
-                  boxShadow: isWinningCell
-                    ? "0 0 12px rgba(245, 197, 66, 0.35)"
-                    : "none",
-                  userSelect: "none",
-                }}
-              >
-                {SLOT_SYMBOL_VIEW[symbol]}
-              </div>
-            );
-          })}
-        </div>
-      ))}
+              return (
+                <div
+                  key={`${rowIndex}-${colIndex}`}
+                  className={`slot-cell${isWinningCell ? " win" : ""}`}
+                >
+                  {SLOT_SYMBOL_VIEW[symbol]}
+                </div>
+              );
+            })}
+          </div>
+        ))
+      )}
     </div>
   );
 }

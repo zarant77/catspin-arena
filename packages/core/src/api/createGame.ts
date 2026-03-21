@@ -33,5 +33,6 @@ export function createGame(args: {
     config,
     rngState: normalizedSeed === 0 ? 0x9e3779b9 : normalizedSeed,
     winnerPlayerId: null,
+    startedPlayerCount: 0,
   };
 }

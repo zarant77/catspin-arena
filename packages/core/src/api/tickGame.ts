@@ -129,7 +129,7 @@ function getWinnerPlayerId(
 
   const alivePlayers = getAlivePlayers(players);
 
-  if (alivePlayers.length === 1) {
+  if (state.startedPlayerCount > 1 && alivePlayers.length === 1) {
     return alivePlayers[0].id;
   }
 
@@ -144,7 +144,13 @@ function shouldFinishGame(
     return true;
   }
 
-  return getAlivePlayers(players).length <= 1;
+  const alivePlayers = getAlivePlayers(players);
+
+  if (state.startedPlayerCount <= 1) {
+    return alivePlayers.length === 0;
+  }
+
+  return alivePlayers.length <= 1;
 }
 
 function normalizeBetsForSpin(state: GameState): readonly PlayerState[] {
@@ -267,11 +273,19 @@ export function tickGame(state: GameState, now: number): GameState {
     case "resolved": {
       const alivePlayers = getAlivePlayers(state.players);
 
-      if (alivePlayers.length <= 1) {
+      if (state.startedPlayerCount > 1 && alivePlayers.length <= 1) {
         return {
           ...state,
           status: "finished",
           winnerPlayerId: alivePlayers[0]?.id ?? null,
+        };
+      }
+
+      if (state.startedPlayerCount <= 1 && alivePlayers.length === 0) {
+        return {
+          ...state,
+          status: "finished",
+          winnerPlayerId: null,
         };
       }
 

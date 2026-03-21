@@ -1,0 +1,10 @@
+.name-screen {
+  display: grid;
+  gap: 12px;
+  max-width: 360px;
+}
+
+.name-screen .actions {
+  display: flex;
+  gap: 8px;
+}

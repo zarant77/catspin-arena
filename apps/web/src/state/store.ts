@@ -4,6 +4,11 @@ import { createRealtimeClient, type RealtimeClient } from "../network/client";
 import type { SocketStatus } from "../network/socket";
 import { getStoredPlayerName, savePlayerName } from "../utils/playerName";
 
+export type FooterState = {
+  primaryText: string;
+  secondaryText?: string;
+};
+
 export type ClientStoreState = {
   connectionStatus: SocketStatus;
   roomId: string | null;
@@ -11,6 +16,7 @@ export type ClientStoreState = {
   playerName: string;
   room: RoomDTO | null;
   error: string | null;
+  footer: FooterState;
 };
 
 export type ClientStore = {
@@ -25,11 +31,18 @@ export type ClientStore = {
   setReady: (ready: boolean) => void;
   setBet: (amount: number) => void;
   startGame: () => void;
+  setFooter: (primaryText: string, secondaryText?: string) => void;
+  clearFooter: () => void;
 };
 
 export type CreateClientStoreOptions = {
   apiBaseUrl: string;
   wsUrl: string;
+};
+
+const EMPTY_FOOTER: FooterState = {
+  primaryText: "",
+  secondaryText: undefined,
 };
 
 export function createClientStore(
@@ -42,6 +55,7 @@ export function createClientStore(
     playerName: getStoredPlayerName(),
     room: null,
     error: null,
+    footer: EMPTY_FOOTER,
   };
 
   const listeners = new Set<() => void>();
@@ -81,11 +95,14 @@ export function createClientStore(
         roomId: null,
         playerId: null,
         error: null,
+        footer: EMPTY_FOOTER,
       });
     },
 
     onError: (message) => {
-      setState({ error: message });
+      setState({
+        error: message,
+      });
     },
 
     onStatusChange: (connectionStatus) => {
@@ -144,6 +161,10 @@ export function createClientStore(
     },
 
     leaveRoom: () => {
+      setState({
+        footer: EMPTY_FOOTER,
+      });
+
       client.leaveRoom();
     },
 
@@ -157,6 +178,21 @@ export function createClientStore(
 
     startGame: () => {
       client.startGame();
+    },
+
+    setFooter: (primaryText, secondaryText) => {
+      setState({
+        footer: {
+          primaryText,
+          secondaryText,
+        },
+      });
+    },
+
+    clearFooter: () => {
+      setState({
+        footer: EMPTY_FOOTER,
+      });
     },
   };
 }

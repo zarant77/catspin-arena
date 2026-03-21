@@ -1,0 +1,20 @@
+.lobby-screen {
+  display: grid;
+  gap: 16px;
+}
+
+.lobby-screen .actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.lobby-screen .room-code {
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+.players-list ul {
+  margin: 0;
+  padding-left: 20px;
+}

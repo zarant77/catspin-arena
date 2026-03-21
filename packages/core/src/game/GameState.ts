@@ -13,6 +13,7 @@ export type GameState = {
   readonly config: GameConfig;
   readonly rngState: number;
   readonly winnerPlayerId: PlayerId | null;
+  readonly startedPlayerCount: number;
 };
 
 export function getPlayerById(

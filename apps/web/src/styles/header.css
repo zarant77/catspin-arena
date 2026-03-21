@@ -1,0 +1,75 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 12px 20px;
+}
+
+/* LEFT */
+.header .title {
+  display: flex;
+  flex-direction: column;
+}
+
+.header .main {
+  font-size: 24px;
+  font-weight: bold;
+  color: #ff2bd6;
+  text-shadow: 0 0 8px #ff2bd6;
+}
+
+.header .sub {
+  font-size: 12px;
+  color: #888;
+  letter-spacing: 0.1em;
+}
+
+/* RIGHT */
+.header .right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header .player {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header .player button {
+  height: 32px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
+/* STATUS */
+.header .status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.header .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* states */
+.header .status.connected .dot {
+  background: #39ff14;
+}
+
+.header .status.connecting .dot {
+  background: orange;
+}
+
+.header .status.disconnected .dot {
+  background: red;
+}
+
+.header .status.idle .dot {
+  background: gray;
+}

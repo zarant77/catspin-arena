@@ -1,0 +1,34 @@
+.game-screen {
+  display: grid;
+  gap: 24px;
+}
+
+.game-screen-center {
+  display: grid;
+  gap: 20px;
+}
+
+.game-machine-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 24px;
+  align-items: start;
+}
+
+.game-machine-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.players-section {
+  display: grid;
+  gap: 12px;
+}
+
+@media (max-width: 980px) {
+  .game-machine-layout {
+    grid-template-columns: 1fr;
+  }
+}

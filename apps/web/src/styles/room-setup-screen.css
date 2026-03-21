@@ -1,0 +1,20 @@
+.room-setup-screen {
+  display: grid;
+  gap: 12px;
+  max-width: 420px;
+}
+
+.room-setup-row {
+  display: flex;
+  gap: 8px;
+}
+
+.room-setup-row input {
+  flex: 1;
+}
+
+@media (max-width: 640px) {
+  .room-setup-row {
+    flex-direction: column;
+  }
+}

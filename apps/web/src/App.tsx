@@ -11,6 +11,10 @@ import { NameScreen } from "./components/screens/NameScreen";
 import { RoomSetupScreen } from "./components/screens/RoomSetupScreen";
 import { LobbyScreen } from "./components/screens/LobbyScreen";
 import { GameScreen } from "./components/screens/GameScreen";
+import { AppHeader } from "./components/layout/AppHeader";
+import { AppFooter } from "./components/layout/AppFooter";
+
+import "./styles/index.css";
 
 type Screen = "name" | "room_setup" | "lobby" | "game";
 
@@ -29,8 +33,12 @@ function getCurrentPlayer(
   return room.game.players.find((player) => player.id === playerId) ?? null;
 }
 
-function getScreen(playerName: string | null, room: RoomDTO | null): Screen {
-  if (playerName === null || playerName.trim().length === 0) {
+function getScreen(
+  playerName: string | null,
+  room: RoomDTO | null,
+  isEditingName: boolean,
+): Screen {
+  if (playerName === null || playerName.trim().length === 0 || isEditingName) {
     return "name";
   }
 
@@ -53,6 +61,7 @@ export default function App() {
     () => getRoomIdFromHash() ?? "",
   );
   const [betInput, setBetInput] = useState<number>(10);
+  const [isEditingName, setIsEditingName] = useState<boolean>(false);
 
   const autoJoinAttemptedRef = useRef(false);
 
@@ -63,8 +72,8 @@ export default function App() {
   }, [state.room, state.playerId]);
 
   const screen = useMemo(() => {
-    return getScreen(state.playerName, state.room);
-  }, [state.playerName, state.room]);
+    return getScreen(state.playerName, state.room, isEditingName);
+  }, [state.playerName, state.room, isEditingName]);
 
   const isHost =
     state.room !== null &&
@@ -101,6 +110,10 @@ export default function App() {
       return;
     }
 
+    if (isEditingName) {
+      return;
+    }
+
     if (state.connectionStatus !== "connected") {
       return;
     }
@@ -119,7 +132,13 @@ export default function App() {
       roomId: roomIdFromHash,
       name,
     });
-  }, [state.connectionStatus, state.playerName, state.room, store]);
+  }, [
+    state.connectionStatus,
+    state.playerName,
+    state.room,
+    isEditingName,
+    store,
+  ]);
 
   useEffect(() => {
     if (state.room !== null) {
@@ -136,12 +155,21 @@ export default function App() {
     }
 
     store.setPlayerName(trimmedName);
+    setIsEditingName(false);
     autoJoinAttemptedRef.current = false;
   };
 
-  const handleChangeName = (): void => {
-    store.setPlayerName("");
+  const handleStartEditingName = (): void => {
+    setIsEditingName(true);
     autoJoinAttemptedRef.current = false;
+  };
+
+  const handleCancelEditingName = (): void => {
+    if (trimmedPlayerName.length === 0) {
+      return;
+    }
+
+    setIsEditingName(false);
   };
 
   const handleCreateRoom = async (): Promise<void> => {
@@ -186,85 +214,84 @@ export default function App() {
 
   const handleLeaveRoom = (): void => {
     autoJoinAttemptedRef.current = true;
-    clearRoomIdHash();
-    setRoomInput("");
     store.leaveRoom();
+
+    setTimeout(() => {
+      clearRoomIdHash();
+      setRoomInput("");
+    }, 100);
   };
 
   return (
-    <div
-      style={{
-        maxWidth: 960,
-        margin: "0 auto",
-        padding: 24,
-        fontFamily: "sans-serif",
-      }}
-    >
-      <h1>CatSpin Arena</h1>
+    <div className="app-shell">
+      <div className="app-background" />
 
-      <p>
-        Connection: <strong>{state.connectionStatus}</strong>
-      </p>
-
-      {state.playerId !== null ? (
-        <p>
-          Player ID: <strong>{state.playerId}</strong>
-        </p>
-      ) : null}
-
-      {state.error !== null ? (
-        <p style={{ color: "crimson" }}>{state.error}</p>
-      ) : null}
-
-      {screen === "name" ? (
-        <NameScreen
-          initialValue={state.playerName ?? ""}
-          onSubmit={handleSetPlayerName}
-        />
-      ) : null}
-
-      {screen === "room_setup" ? (
-        <RoomSetupScreen
+      <div className="app-chrome">
+        <AppHeader
+          connectionStatus={state.connectionStatus}
           playerName={trimmedPlayerName}
-          roomInput={roomInput}
-          onRoomInputChange={(value) => {
-            setRoomInput(value);
-            autoJoinAttemptedRef.current = false;
-          }}
-          onCreateRoom={handleCreateRoom}
-          onJoinRoom={handleJoinRoom}
-          onChangeName={handleChangeName}
-          canCreate={canCreate}
-          canJoin={canJoin}
+          onChangeName={handleStartEditingName}
         />
-      ) : null}
 
-      {screen === "lobby" && state.room !== null ? (
-        <LobbyScreen
-          room={state.room}
-          playerId={state.playerId}
-          currentPlayer={currentPlayer}
-          players={players}
-          isHost={isHost}
-          onToggleReady={() =>
-            store.setReady(!(currentPlayer?.isReady ?? false))
-          }
-          onStartGame={() => store.startGame()}
-          onLeaveRoom={handleLeaveRoom}
-        />
-      ) : null}
+        <main className="app-main">
+          {state.error !== null ? (
+            <div className="app-error-banner">{state.error}</div>
+          ) : null}
 
-      {screen === "game" && state.room !== null ? (
-        <GameScreen
-          room={state.room}
-          playerId={state.playerId}
-          currentPlayer={currentPlayer}
-          betInput={betInput}
-          onBetInputChange={setBetInput}
-          onSetBet={() => store.setBet(betInput)}
-          onLeaveRoom={handleLeaveRoom}
-        />
-      ) : null}
+          <div className="app-content">
+            {screen === "name" ? (
+              <NameScreen
+                initialValue={state.playerName ?? ""}
+                onSubmit={handleSetPlayerName}
+                onCancel={handleCancelEditingName}
+              />
+            ) : null}
+
+            {screen === "room_setup" ? (
+              <RoomSetupScreen
+                roomInput={roomInput}
+                onRoomInputChange={(value) => {
+                  setRoomInput(value);
+                  autoJoinAttemptedRef.current = false;
+                }}
+                onCreateRoom={handleCreateRoom}
+                onJoinRoom={handleJoinRoom}
+                canCreate={canCreate}
+                canJoin={canJoin}
+              />
+            ) : null}
+
+            {screen === "lobby" && state.room !== null ? (
+              <LobbyScreen
+                room={state.room}
+                playerId={state.playerId}
+                currentPlayer={currentPlayer}
+                players={players}
+                isHost={isHost}
+                onToggleReady={() =>
+                  store.setReady(!(currentPlayer?.isReady ?? false))
+                }
+                onStartGame={() => store.startGame()}
+                onLeaveRoom={handleLeaveRoom}
+              />
+            ) : null}
+
+            {screen === "game" && state.room !== null ? (
+              <GameScreen
+                room={state.room}
+                playerId={state.playerId}
+                currentPlayer={currentPlayer}
+                betInput={betInput}
+                onBetInputChange={setBetInput}
+                onSetBet={() => store.setBet(betInput)}
+                onLeaveRoom={handleLeaveRoom}
+              />
+            ) : null}
+          </div>
+        </main>
+
+        <AppFooter />
+      </div>
     </div>
   );
 }

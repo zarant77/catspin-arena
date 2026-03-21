@@ -1,0 +1,32 @@
+.slot {
+  display: inline-grid;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 16px;
+  border: 2px solid #333;
+  background: #161616;
+}
+
+.slot-row {
+  display: grid;
+  gap: 8px;
+}
+
+.slot-cell {
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  border-radius: 12px;
+  background: #242424;
+  border: 1px solid #444;
+  user-select: none;
+}
+
+.slot-cell.win {
+  background: #3a2f12;
+  border: 2px solid #f5c542;
+  box-shadow: 0 0 12px rgba(245, 197, 66, 0.35);
+}
