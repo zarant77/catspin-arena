@@ -190,6 +190,11 @@
   cursor: ns-resize;
 }
 
+.bet-stack[data-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 .bet-step {
   width: 100%;
   height: var(--bet-step-size);
@@ -224,6 +229,58 @@
   font-size: 0.95rem;
   color: var(--color-text);
   pointer-events: none;
+}
+
+/* timer */
+.round-timer {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
+  padding: 4px 12px;
+  border-radius: 999px;
+
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+
+  color: var(--color-text);
+  background: rgba(11, 14, 20, 0.75);
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  backdrop-filter: blur(10px);
+
+  box-shadow:
+    0 0 10px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+  transition: all 0.2s ease;
+}
+
+.round-timer.is-urgent {
+  color: #ff4d4f;
+
+  border-color: rgba(255, 77, 79, 0.5);
+
+  box-shadow:
+    0 0 12px rgba(255, 77, 79, 0.6),
+    0 0 24px rgba(255, 77, 79, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+  animation: timer-pulse 0.8s ease-in-out infinite;
+}
+
+@keyframes timer-pulse {
+  0% {
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    transform: translateX(-50%) scale(1.1);
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+  }
 }
 
 /* wide layout */

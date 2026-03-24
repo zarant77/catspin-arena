@@ -124,6 +124,7 @@ export function BetControls(props: BetControlsProps) {
         aria-valuemax={safeMax}
         aria-valuenow={safeValue}
         aria-disabled={disabled}
+        data-disabled={disabled}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}

@@ -28,6 +28,10 @@ export function RoundTimer({ room, serverTimeOffsetMs }: Props) {
   const seconds = Math.round(remainingMs / 1000);
   const isUrgent = seconds <= 3;
 
+  if (seconds <= 0) {
+    return null;
+  }
+
   return (
     <span
       className={`round-timer ${isUrgent ? "is-urgent" : ""}`}
