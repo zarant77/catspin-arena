@@ -5,12 +5,14 @@ import { SlotMachine } from "./SlotMachine";
 import { PlayerItem } from "./PlayerItem";
 import { BetControls } from "./BetControls";
 import { GameStatus } from "./GameStatus";
+import { RoundTimer } from "./RoundTimer";
 
 type GameScreenProps = {
   readonly room: RoomDTO;
   readonly playerId: string | null;
   readonly currentPlayer: PlayerView | null;
   readonly betInput: number;
+  readonly serverTimeOffsetMs: number;
   readonly onBetInputChange: (value: number) => void;
   readonly onSetBet: () => void;
   readonly onLeaveRoom: () => void;
@@ -62,9 +64,15 @@ export function GameScreen(props: GameScreenProps) {
       title={`Round #${round.index}`}
       className="game-screen"
       actions={
-        <button type="button" onClick={onLeaveRoom}>
-          Leave room
-        </button>
+        <>
+          <RoundTimer
+            room={room}
+            serverTimeOffsetMs={props.serverTimeOffsetMs}
+          />
+          <button type="button" onClick={onLeaveRoom}>
+            Leave room
+          </button>
+        </>
       }
     >
       <div className="game-layout">

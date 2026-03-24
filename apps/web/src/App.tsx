@@ -280,6 +280,7 @@ export default function App() {
               playerId={state.playerId}
               currentPlayer={currentPlayer}
               betInput={betInput}
+              serverTimeOffsetMs={state.serverTimeOffsetMs}
               onBetInputChange={setBetInput}
               onSetBet={() => store.setBet(betInput)}
               onLeaveRoom={handleLeaveRoom}

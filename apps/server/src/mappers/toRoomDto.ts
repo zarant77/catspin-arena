@@ -1,7 +1,12 @@
 import type { PublicGameState } from "@catspin/core";
 import type { GameStateDTO, RoomDTO } from "@catspin/protocol";
 
-export function toGameStateDto(game: PublicGameState): GameStateDTO {
+export function toGameStateDto(args: {
+  game: PublicGameState;
+  serverNow: number;
+}): GameStateDTO {
+  const { game, serverNow } = args;
+
   return {
     id: game.id,
     status: game.status,
@@ -37,15 +42,21 @@ export function toGameStateDto(game: PublicGameState): GameStateDTO {
               })),
             },
     },
+    bettingDurationMs: game.bettingDurationMs,
+    serverNow,
   };
 }
 
 export function toRoomDto(args: {
   id: string;
   game: PublicGameState;
+  serverNow: number;
 }): RoomDTO {
   return {
     id: args.id,
-    game: toGameStateDto(args.game),
+    game: toGameStateDto({
+      game: args.game,
+      serverNow: args.serverNow,
+    }),
   };
 }

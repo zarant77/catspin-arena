@@ -17,6 +17,7 @@ export type ClientStoreState = {
   room: RoomDTO | null;
   error: string | null;
   footer: FooterState;
+  serverTimeOffsetMs: number;
 };
 
 export type ClientStore = {
@@ -55,6 +56,7 @@ export function createClientStore(
     room: null,
     error: null,
     footer: EMPTY_FOOTER,
+    serverTimeOffsetMs: 0,
   };
 
   const listeners = new Set<() => void>();
@@ -76,6 +78,7 @@ export function createClientStore(
         room,
         roomId: room.id,
         error: null,
+        serverTimeOffsetMs: room.game.serverNow - Date.now(),
       });
     },
 
@@ -85,6 +88,7 @@ export function createClientStore(
         roomId: room.id,
         playerId,
         error: null,
+        serverTimeOffsetMs: room.game.serverNow - Date.now(),
       });
     },
 
@@ -95,6 +99,7 @@ export function createClientStore(
         playerId: null,
         error: null,
         footer: EMPTY_FOOTER,
+        serverTimeOffsetMs: 0,
       });
     },
 

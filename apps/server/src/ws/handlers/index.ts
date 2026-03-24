@@ -35,7 +35,10 @@ function subscribeToRoom(context: ConnectionContext, room: Room): void {
       type: "room_state",
       room: {
         id: snapshot.id,
-        game: toGameStateDto(snapshot.game),
+        game: toGameStateDto({
+          game: snapshot.game,
+          serverNow: Date.now(),
+        }),
       },
     });
   });
@@ -96,6 +99,7 @@ function handleJoin(
     room: toRoomDto({
       id: room.id,
       game: room.getPublicState(),
+      serverNow: Date.now(),
     }),
     playerId: event.playerId,
   });

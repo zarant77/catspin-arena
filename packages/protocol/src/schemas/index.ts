@@ -62,6 +62,8 @@ export const gameStateSchema = z.object({
   winnerPlayerId: z.string().nullable(),
   players: z.array(playerSchema),
   round: roundSchema,
+  bettingDurationMs: z.number().int().nonnegative(),
+  serverNow: z.number().int(),
 });
 
 export const roomSchema = z.object({

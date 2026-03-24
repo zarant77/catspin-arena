@@ -41,6 +41,7 @@ export type PublicGameState = {
   readonly winnerPlayerId: string | null;
   readonly players: readonly PublicPlayerState[];
   readonly round: PublicRoundState;
+  readonly bettingDurationMs: number;
 };
 
 export function getPublicState(state: GameState): PublicGameState {
@@ -79,5 +80,6 @@ export function getPublicState(state: GameState): PublicGameState {
               })),
             },
     },
+    bettingDurationMs: state.config.bettingDurationMs,
   };
 }

@@ -33,4 +33,6 @@ export type GameStateDTO = {
   readonly winnerPlayerId: string | null;
   readonly players: PlayerDTO[];
   readonly round: RoundDTO;
+  readonly bettingDurationMs: number;
+  readonly serverNow: number;
 };
