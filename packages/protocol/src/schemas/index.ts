@@ -44,11 +44,14 @@ export const roundSchema = z.object({
   payoutAmount: z.number().int().nonnegative(),
 });
 
+export const paylineSchema = z.array(z.number().int().min(0).max(2)).length(5);
+
 export const gameConfigSchema = z.object({
   minBet: z.number().int().positive(),
   maxBet: z.number().int().positive(),
   bettingDurationMs: z.number().int().nonnegative(),
   spinDurationMs: z.number().int().nonnegative(),
+  paylines: z.array(paylineSchema),
 });
 
 export const gameStateSchema = z.object({

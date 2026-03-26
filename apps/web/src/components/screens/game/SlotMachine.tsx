@@ -80,10 +80,6 @@ export function SlotMachine(props: SlotMachineProps) {
     return normalizeGrid(grid);
   }, [grid]);
 
-  const winningCells = useMemo(() => {
-    return getWinningCellSet(winningLines);
-  }, [winningLines]);
-
   const lastValidGridRef = useRef<SymbolIdDTO[][]>(createRandomGrid(3, 5));
 
   if (normalizedGrid !== null) {
@@ -91,13 +87,35 @@ export function SlotMachine(props: SlotMachineProps) {
   }
 
   const [displayGrid, setDisplayGrid] = useState<SymbolIdDTO[][]>(lastValidGridRef.current);
+  const [displayWinningLines, setDisplayWinningLines] = useState<WinningLineDTO[]>([]);
+  const prevIsSpinningRef = useRef(isSpinning);
 
   useEffect(() => {
-    if (!isSpinning) {
+    const wasSpinning = prevIsSpinningRef.current;
+    const spinJustStarted = wasSpinning === false && isSpinning === true;
+    const spinJustFinished = wasSpinning === true && isSpinning === false;
+
+    if (spinJustStarted) {
+      setDisplayWinningLines([]);
+    }
+
+    if (spinJustFinished) {
       if (normalizedGrid !== null) {
         setDisplayGrid(normalizedGrid);
       }
 
+      setDisplayWinningLines([...winningLines]);
+    }
+
+    if (wasSpinning === false && isSpinning === false && normalizedGrid !== null) {
+      setDisplayGrid(normalizedGrid);
+    }
+
+    prevIsSpinningRef.current = isSpinning;
+  }, [isSpinning, normalizedGrid, winningLines]);
+
+  useEffect(() => {
+    if (!isSpinning) {
       return;
     }
 
@@ -113,6 +131,10 @@ export function SlotMachine(props: SlotMachineProps) {
       window.clearInterval(intervalId);
     };
   }, [isSpinning, normalizedGrid]);
+
+  const winningCells = useMemo(() => {
+    return getWinningCellSet(displayWinningLines);
+  }, [displayWinningLines]);
 
   const hasRenderableGrid = displayGrid.length > 0;
 
@@ -130,7 +152,7 @@ export function SlotMachine(props: SlotMachineProps) {
             }}
           >
             {row.map((symbol, colIndex) => {
-              const isWinningCell = !isSpinning && winningCells.has(`${rowIndex}:${colIndex}`);
+              const isWinningCell = winningCells.has(`${rowIndex}:${colIndex}`);
 
               return (
                 <div key={`${rowIndex}-${colIndex}`} className="slot-cell" data-win={isWinningCell}>

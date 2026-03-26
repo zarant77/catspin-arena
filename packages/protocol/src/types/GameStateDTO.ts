@@ -4,6 +4,8 @@ export type GameStatusDTO = 'lobby' | 'running' | 'finished';
 export type RoundStatusDTO = 'idle' | 'betting' | 'spinning' | 'resolved';
 export type SymbolIdDTO = 'L1' | 'L2' | 'L3' | 'L4' | 'M1' | 'M2' | 'H1' | 'H2';
 
+export type PaylineDTO = number[];
+
 export type WinningLineDTO = {
   readonly lineIndex: number;
   readonly symbol: SymbolIdDTO;
@@ -33,6 +35,7 @@ export type GameConfigDTO = {
   readonly maxBet: number;
   readonly bettingDurationMs: number;
   readonly spinDurationMs: number;
+  readonly paylines: PaylineDTO[];
 };
 
 export type GameStateDTO = {

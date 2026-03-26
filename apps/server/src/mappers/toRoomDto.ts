@@ -47,6 +47,7 @@ export function toGameStateDto(args: { game: PublicGameState; serverNow: number 
       maxBet: game.config.maxBet,
       bettingDurationMs: game.config.bettingDurationMs,
       spinDurationMs: game.config.spinDurationMs,
+      paylines: game.config.paylines.map((payline) => [...payline]),
     },
     serverNow,
   };

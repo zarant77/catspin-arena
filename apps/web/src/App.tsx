@@ -44,6 +44,8 @@ function getScreen(playerName: string | null, room: RoomDTO | null, isEditingNam
 export default function App() {
   const store = useClientStore();
   const state = useClientStoreState();
+  
+  console.log(state.room?.game)
 
   const [roomInput, setRoomInput] = useState<string>(() => getRoomIdFromHash() ?? '');
   const [betInput, setBetInput] = useState<number>(0);

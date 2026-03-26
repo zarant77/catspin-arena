@@ -1,11 +1,12 @@
 import type { GameState } from '../game/GameState';
-import type { GameStatus, RoundStatus, SymbolId } from '../game/Rules';
+import type { GameStatus, Payline, RoundStatus, SymbolId } from '../game/Rules';
 
 export type PublicGameConfig = {
   readonly minBet: number;
   readonly maxBet: number;
   readonly bettingDurationMs: number;
   readonly spinDurationMs: number;
+  readonly paylines: readonly Payline[];
 };
 
 export type PublicPlayerState = {
@@ -98,6 +99,7 @@ export function getPublicState(state: GameState): PublicGameState {
       maxBet: state.config.maxBet,
       bettingDurationMs: state.config.bettingDurationMs,
       spinDurationMs: state.config.spinDurationMs,
+      paylines: state.config.math.paylines,
     },
   };
 }

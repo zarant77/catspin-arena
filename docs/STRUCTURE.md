@@ -96,67 +96,55 @@
 ### apps/server/src/game/GameLoop.ts
 
 Classes:
-
 - GameLoop
 
 ### apps/server/src/http/createRoom.ts
 
 Exported Functions:
-
 - registerCreateRoomRoute(app, roomManager)
 
 Internal Functions:
-
 - createRoomId()
 
 ### apps/server/src/index.ts
 
 Internal Functions:
-
 - bootstrap()
 
 ### apps/server/src/mappers/toRoomDto.ts
 
 Exported Functions:
-
 - toGameStateDto(args)
 - toRoomDto(args)
 
 ### apps/server/src/rooms/PlayerSession.ts
 
 Classes:
-
 - PlayerSession
 
 Types:
-
 - PlayerSessionSnapshot
 
 ### apps/server/src/rooms/Room.ts
 
 Classes:
-
 - Room
 
 Types:
-
 - RoomSnapshot
 - RoomSubscriber
 
 ### apps/server/src/rooms/RoomManager.ts
 
 Classes:
-
 - RoomManager
 
 ### apps/server/src/ws/handlers/index.ts
 
 Exported Functions:
-
 - registerSocketHandlers(socket, roomManager)
 
 Internal Functions:
-
 - cleanupConnection(context)
 - handleBet(context, event)
 - handleJoin(context, event)
@@ -167,79 +155,65 @@ Internal Functions:
 - subscribeToRoom(context, room)
 
 Types:
-
 - ConnectionContext
 
 ### apps/server/src/ws/server.ts
 
 Exported Functions:
-
 - attachWebSocketServer(app, roomManager)
 
 ### apps/web/src/api/rooms.ts
 
 Exported Functions:
-
 - createRoom()
 
 Types:
-
 - CreateRoomResponse
 
 ### apps/web/src/components/favicon/animatedFavicon.ts
 
 Exported Functions:
-
 - startAnimatedPawFavicon()
 
 Internal Functions:
-
 - createGoldenPawSvg(size, angle)
 - getOrCreateFaviconLink()
 
 ### apps/web/src/components/screens/game/slotSymbols.ts
 
 Types:
-
 - SlotSymbolId
 
 ### apps/web/src/network/client.ts
 
 Exported Functions:
-
 - createRealtimeClient(options)
 
 Internal Functions:
-
 - createId(prefix)
 - getOrCreatePlayerId()
 - getOrCreateSessionId()
 - savePlayerId(value)
 
 Types:
-
 - RealtimeClient
 - RealtimeClientOptions
 
 ### apps/web/src/network/socket.ts
 
 Exported Functions:
-
 - createSocket(url)
 
 Types:
-
 - SocketClient
 - SocketStatus
 
 ### apps/web/src/state/store.ts
 
 Exported Functions:
-
 - createClientStore(options)
 
 Types:
-
 - ClientStore
 - ClientStoreState
 - CreateClientStoreOptions
@@ -248,26 +222,22 @@ Types:
 ### apps/web/src/types/playerView.ts
 
 Types:
-
 - PlayerView
 
 ### apps/web/src/utils/playerName.ts
 
 Exported Functions:
-
 - getStoredPlayerName()
 - savePlayerName(value)
 
 ### apps/web/src/utils/roomHash.ts
 
 Exported Functions:
-
 - clearRoomIdHash()
 - getRoomIdFromHash()
 - setRoomIdHash(roomId)
 
 Internal Functions:
-
 - buildUrlWithoutHash()
 
 ### apps/web/vite.config.ts
@@ -275,34 +245,28 @@ Internal Functions:
 ### packages/core/src/api/applyCommand.ts
 
 Exported Functions:
-
 - applyCommand(state, command)
 
 Internal Functions:
-
 - canStartGame(state)
 - createBettingRound(state, now)
 - replacePlayer(players, playerId, update)
 - sanitizeBet(state, amount, balance)
 
 Types:
-
 - GameCommand
 
 ### packages/core/src/api/createGame.ts
 
 Exported Functions:
-
 - createGame(args)
 
 ### packages/core/src/api/getPublicState.ts
 
 Exported Functions:
-
 - getPublicState(state)
 
 Types:
-
 - PublicGameConfig
 - PublicGameState
 - PublicPlayerState
@@ -313,11 +277,9 @@ Types:
 ### packages/core/src/api/tickGame.ts
 
 Exported Functions:
-
 - tickGame(state, now)
 
 Internal Functions:
-
 - buildSpinResult(state)
 - createBettingRound(state, now)
 - getAlivePlayers(players)
@@ -333,17 +295,14 @@ Internal Functions:
 ### packages/core/src/config/GameConfig.ts
 
 Exported Functions:
-
 - buildGameConfig(overrides)
 
 Types:
-
 - GameConfigOverrides
 
 ### packages/core/src/config/MathConfig.ts
 
 Types:
-
 - MathProfileId
 - MathStats
 - SlotMathConfig
@@ -361,63 +320,52 @@ Types:
 ### packages/core/src/config/MathRegistry.ts
 
 Exported Functions:
-
 - getAllMathConfigs()
 - getMathConfig(profileId)
 
 ### packages/core/src/engine/Payout.ts
 
 Classes:
-
 - PayoutCalculator
 
 Types:
-
 - PayoutResult
 
 ### packages/core/src/engine/RNG.ts
 
 Classes:
-
 - RNG
 
 ### packages/core/src/engine/SlotEngine.ts
 
 Classes:
-
 - SlotEngine
 
 ### packages/core/src/game/GameState.ts
 
 Exported Functions:
-
 - getActivePlayers(state)
 - getPlayerById(state, playerId)
 
 Types:
-
 - GameId
 - GameState
 
 ### packages/core/src/game/Player.ts
 
 Exported Functions:
-
 - createPlayer(args)
 
 Types:
-
 - PlayerId
 - PlayerState
 
 ### packages/core/src/game/Round.ts
 
 Exported Functions:
-
 - createRound(seed)
 
 Types:
-
 - RoundState
 - SpinGrid
 - SpinResult
@@ -426,7 +374,6 @@ Types:
 ### packages/core/src/game/Rules.ts
 
 Types:
-
 - GameConfig
 - GameSettings
 - GameStatus
@@ -445,7 +392,6 @@ Types:
 ### packages/protocol/src/events/client.ts
 
 Types:
-
 - ClientEvent
 - JoinRoomEvent
 - LeaveRoomEvent
@@ -456,7 +402,6 @@ Types:
 ### packages/protocol/src/events/server.ts
 
 Types:
-
 - ErrorEvent
 - JoinedRoomEvent
 - LeftRoomEvent
@@ -468,7 +413,6 @@ Types:
 ### packages/protocol/src/schemas/index.ts
 
 Types:
-
 - GameConfigSchema
 - GameStateSchema
 - PlayerSchema
@@ -481,10 +425,10 @@ Types:
 ### packages/protocol/src/types/GameStateDTO.ts
 
 Types:
-
 - GameConfigDTO
 - GameStateDTO
 - GameStatusDTO
+- PaylineDTO
 - RoundDTO
 - RoundStatusDTO
 - SpinResultDTO
@@ -494,13 +438,11 @@ Types:
 ### packages/protocol/src/types/PlayerDTO.ts
 
 Types:
-
 - PlayerDTO
 
 ### packages/protocol/src/types/RoomDTO.ts
 
 Types:
-
 - RoomDTO
 
 ### packages/shared/src/constants/rooms.ts
@@ -510,5 +452,4 @@ Types:
 ### packages/shared/src/utils/randomId.ts
 
 Exported Functions:
-
 - randomId()
