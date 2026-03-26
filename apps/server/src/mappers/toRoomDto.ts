@@ -9,17 +9,7 @@ export function toGameStateDto(args: { game: PublicGameState; serverNow: number 
     status: game.status,
     hostPlayerId: game.hostPlayerId,
     winnerPlayerId: game.winnerPlayerId,
-    players: game.players.map((player) => ({
-      id: player.id,
-      name: player.name,
-      balance: player.balance,
-      currentBet: player.currentBet,
-      lastBet: player.lastBet,
-      isReady: player.isReady,
-      isConnected: player.isConnected,
-      isEliminated: player.isEliminated,
-      lastWin: player.lastWin,
-    })),
+    players: [...game.players],
     round: {
       index: game.round.index,
       status: game.round.status,
@@ -32,12 +22,7 @@ export function toGameStateDto(args: { game: PublicGameState; serverNow: number 
           : {
               grid: game.round.result.grid.map((column) => [...column]),
               totalMultiplier: game.round.result.totalMultiplier,
-              winningLines: game.round.result.winningLines.map((line) => ({
-                lineIndex: line.lineIndex,
-                symbol: line.symbol,
-                count: line.count,
-                multiplier: line.multiplier,
-              })),
+              winningLines: [...game.round.result.winningLines],
             },
       winnerPlayerIds: [...game.round.winnerPlayerIds],
       payoutAmount: game.round.payoutAmount,
@@ -48,11 +33,7 @@ export function toGameStateDto(args: { game: PublicGameState; serverNow: number 
       bettingDurationMs: game.config.bettingDurationMs,
       spinDurationMs: game.config.spinDurationMs,
       paylines: game.config.paylines.map((payline) => [...payline]),
-      paylinePresentation: {
-        lineDurationMs: game.config.paylinePresentation.lineDurationMs,
-        lineGapMs: game.config.paylinePresentation.lineGapMs,
-        hideDelayMs: game.config.paylinePresentation.hideDelayMs,
-      },
+      paylinePresentation: game.config.paylinePresentation,
     },
     serverNow,
   };

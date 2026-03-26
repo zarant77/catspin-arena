@@ -64,13 +64,32 @@ function sanitizeRoundBet(minBet: number, maxBet: number, player: PlayerState): 
   return cappedBet;
 }
 
+function resolvePreferredBet(state: GameState, player: PlayerState): number {
+  const minBet = state.config.minBet;
+  const maxBet = state.config.maxBet;
+
+  if (player.balance < minBet) {
+    return 0;
+  }
+
+  if (player.lastBet !== null) {
+    const repeatedBet = Math.min(player.lastBet, maxBet, player.balance);
+
+    if (repeatedBet >= minBet) {
+      return repeatedBet;
+    }
+  }
+
+  const fallbackMinBet = Math.min(minBet, maxBet, player.balance);
+
+  return fallbackMinBet >= minBet ? fallbackMinBet : 0;
+}
+
 function resolveAutoBet(state: GameState, player: PlayerState): number {
   const policy = state.config.roundRules.missedBetPolicy;
 
-  if (policy === 'repeat-last' && player.lastBet !== null) {
-    const repeatedBet = Math.min(player.lastBet, state.config.maxBet, player.balance);
-
-    return repeatedBet >= state.config.minBet ? repeatedBet : 0;
+  if (policy === 'repeat-last') {
+    return resolvePreferredBet(state, player);
   }
 
   const minBet = Math.min(state.config.minBet, state.config.maxBet, player.balance);
@@ -143,6 +162,7 @@ function resolveRoundOutcome(
         ...player,
         currentBet: 0,
         lastWin: 0,
+        hasConfirmedBet: false,
       };
     }
 
@@ -151,13 +171,31 @@ function resolveRoundOutcome(
     const extraChip = winnerIndex >= 0 && winnerIndex < remainder ? 1 : 0;
     const winAmount = winnerIndex >= 0 ? baseShare + extraChip : 0;
     const nextBalance = player.balance - bet + winAmount;
+    const nextIsEliminated = nextBalance < state.config.minBet;
+
+    if (nextIsEliminated === true) {
+      return {
+        ...player,
+        balance: nextBalance,
+        currentBet: 0,
+        lastWin: winAmount,
+        isEliminated: true,
+        hasConfirmedBet: false,
+      };
+    }
+
+    const nextBet = resolvePreferredBet(state, {
+      ...player,
+      balance: nextBalance,
+    });
 
     return {
       ...player,
       balance: nextBalance,
-      currentBet: 0,
+      currentBet: nextBet,
       lastWin: winAmount,
-      isEliminated: nextBalance < state.config.minBet,
+      isEliminated: false,
+      hasConfirmedBet: false,
     };
   });
 
@@ -210,6 +248,7 @@ function normalizeBetsForSpin(state: GameState): readonly PlayerState[] {
       return {
         ...player,
         currentBet: 0,
+        hasConfirmedBet: false,
       };
     }
 
@@ -219,6 +258,8 @@ function normalizeBetsForSpin(state: GameState): readonly PlayerState[] {
       return {
         ...player,
         currentBet: sanitizedBet,
+        lastBet: sanitizedBet,
+        hasConfirmedBet: false,
       };
     }
 
@@ -228,6 +269,7 @@ function normalizeBetsForSpin(state: GameState): readonly PlayerState[] {
       ...player,
       currentBet: autoBet,
       lastBet: autoBet > 0 ? autoBet : player.lastBet,
+      hasConfirmedBet: false,
     };
   });
 }
@@ -239,21 +281,24 @@ function preparePlayersForNextRound(state: GameState): readonly PlayerState[] {
         ...player,
         currentBet: 0,
         lastWin: 0,
+        hasConfirmedBet: false,
       };
     }
 
-    const canAffordMinBet = player.balance >= state.config.minBet;
+    const nextBet = resolvePreferredBet(state, player);
+    const isEliminated = nextBet <= 0;
 
     return {
       ...player,
-      currentBet: 0,
+      currentBet: isEliminated ? 0 : nextBet,
       lastWin: 0,
-      isEliminated: canAffordMinBet ? false : true,
+      isEliminated,
+      hasConfirmedBet: false,
     };
   });
 }
 
-function haveAllActivePlayersPlacedBets(state: GameState): boolean {
+function haveAllActivePlayersConfirmedBets(state: GameState): boolean {
   const activePlayers = state.players.filter((player) => player.isConnected === true && player.isEliminated === false);
 
   if (activePlayers.length === 0) {
@@ -263,7 +308,7 @@ function haveAllActivePlayersPlacedBets(state: GameState): boolean {
   return activePlayers.every((player) => {
     const bet = sanitizeRoundBet(state.config.minBet, state.config.maxBet, player);
 
-    return bet > 0;
+    return bet > 0 && player.hasConfirmedBet === true;
   });
 }
 
@@ -285,15 +330,25 @@ export function tickGame(state: GameState, now: number): GameState {
         return state;
       }
 
+      const nextPlayers = preparePlayersForNextRound(state);
+
       return {
         ...state,
-        round: createBettingPhaseForCurrentRound(state, now),
+        players: nextPlayers,
+        round: createBettingPhaseForCurrentRound(
+          {
+            ...state,
+            players: nextPlayers,
+          },
+          now,
+        ),
       };
     }
 
     case 'betting': {
       const bettingClosesAt = state.round.bettingClosesAt;
-      const shouldSpinNow = haveAllActivePlayersPlacedBets(state) || bettingClosesAt === null || now >= bettingClosesAt;
+      const shouldSpinNow =
+        haveAllActivePlayersConfirmedBets(state) || bettingClosesAt === null || now >= bettingClosesAt;
 
       if (shouldSpinNow === false) {
         return state;

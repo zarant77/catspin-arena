@@ -23,6 +23,10 @@ export type GameCommand =
       readonly amount: number;
     }
   | {
+      readonly type: 'confirm_bet';
+      readonly playerId: PlayerId;
+    }
+  | {
       readonly type: 'start_game';
       readonly playerId: PlayerId;
       readonly now: number;
@@ -189,6 +193,36 @@ export function applyCommand(state: GameState, command: GameCommand): GameState 
           ...item,
           currentBet: nextBet,
           lastBet: nextBet,
+          hasConfirmedBet: false,
+        })),
+      };
+    }
+
+    case 'confirm_bet': {
+      const canConfirm = state.status === 'running' && state.round.status === 'betting';
+
+      if (canConfirm === false) {
+        return state;
+      }
+
+      const player = state.players.find((item) => item.id === command.playerId);
+
+      if (player === undefined || player.isEliminated === true || player.isConnected === false) {
+        return state;
+      }
+
+      const confirmedBet = sanitizeBet(state, player.currentBet, player.balance);
+
+      if (confirmedBet === null) {
+        return state;
+      }
+
+      return {
+        ...state,
+        players: replacePlayer(state.players, command.playerId, (item) => ({
+          ...item,
+          currentBet: confirmedBet,
+          hasConfirmedBet: true,
         })),
       };
     }
@@ -207,6 +241,7 @@ export function applyCommand(state: GameState, command: GameCommand): GameState 
         isReady: false,
         currentBet: 0,
         lastWin: 0,
+        hasConfirmedBet: false,
       }));
 
       const startedPlayerCount = nextPlayers.filter(

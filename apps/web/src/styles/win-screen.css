@@ -1,0 +1,149 @@
+.win-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(6, 10, 18, 0.78);
+  backdrop-filter: blur(6px);
+  animation: win-overlay-fade-in 220ms ease-out;
+}
+
+.win-card {
+  width: min(100%, 420px);
+  padding: 28px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(26, 35, 56, 0.96) 0%, rgba(14, 20, 34, 0.98) 100%);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  text-align: center;
+  animation: win-card-pop-in 280ms ease-out;
+}
+
+.win-label {
+  margin-bottom: 10px;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.win-title {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.win-player {
+  margin-top: 20px;
+  padding: 18px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.win-name {
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.1;
+  word-break: break-word;
+}
+
+.win-balance {
+  margin-top: 8px;
+  color: #9fe870;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.win-card button {
+  margin-top: 22px;
+  min-width: 140px;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #9fe870 0%, #7fcb4e 100%);
+  color: #0d140d;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    filter 120ms ease,
+    box-shadow 120ms ease;
+  box-shadow: 0 10px 24px rgba(127, 203, 78, 0.28);
+}
+
+.win-card button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+}
+
+.win-card button:active {
+  transform: translateY(0);
+  filter: brightness(0.98);
+}
+
+.win-card button:focus-visible {
+  outline: 2px solid rgba(159, 232, 112, 0.95);
+  outline-offset: 3px;
+}
+
+@keyframes win-overlay-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes win-card-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 480px) {
+  .win-overlay {
+    padding: 16px;
+  }
+
+  .win-card {
+    padding: 22px 18px;
+    border-radius: 20px;
+  }
+
+  .win-player {
+    padding: 16px 14px;
+  }
+
+  .win-name {
+    font-size: 22px;
+  }
+
+  .win-balance {
+    font-size: 17px;
+  }
+
+  .win-card button {
+    width: 100%;
+  }
+}

@@ -17,11 +17,6 @@
   flex: 0 0 auto;
 }
 
-.name-secondary {
-  display: flex;
-  justify-content: flex-start;
-}
-
 @media (max-width: 640px) {
   .name-row {
     flex-wrap: wrap;

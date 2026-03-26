@@ -155,6 +155,15 @@ export class Room {
     return this.getSnapshot();
   }
 
+  public confirmBet(playerId: string): RoomSnapshot {
+    this.dispatch({
+      type: 'confirm_bet',
+      playerId,
+    });
+
+    return this.getSnapshot();
+  }
+
   public startGame(playerId: string, now: number): RoomSnapshot {
     this.dispatch({
       type: 'start_game',

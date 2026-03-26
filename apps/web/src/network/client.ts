@@ -17,6 +17,7 @@ export type RealtimeClient = {
   leaveRoom: () => void;
   setReady: (ready: boolean) => void;
   setBet: (amount: number) => void;
+  confirmBet: () => void;
   startGame: () => void;
 };
 
@@ -102,6 +103,13 @@ export function createRealtimeClient(options: RealtimeClientOptions): RealtimeCl
         type: 'set_bet',
         playerId,
         amount,
+      });
+    },
+
+    confirmBet: () => {
+      send({
+        type: 'confirm_bet',
+        playerId,
       });
     },
 

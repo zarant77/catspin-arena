@@ -10,6 +10,7 @@ export type PlayerState = {
   readonly isConnected: boolean;
   readonly isEliminated: boolean;
   readonly lastWin: number;
+  readonly hasConfirmedBet: boolean;
 };
 
 export function createPlayer(args: { id: PlayerId; name: string; startBalance: number }): PlayerState {
@@ -23,5 +24,6 @@ export function createPlayer(args: { id: PlayerId; name: string; startBalance: n
     isConnected: true,
     isEliminated: false,
     lastWin: 0,
+    hasConfirmedBet: false,
   };
 }

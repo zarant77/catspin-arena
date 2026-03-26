@@ -31,6 +31,7 @@ export type ClientStore = {
   leaveRoom: () => void;
   setReady: (ready: boolean) => void;
   setBet: (amount: number) => void;
+  confirmBet: () => void;
   startGame: () => void;
   clearFooter: () => void;
 };
@@ -176,6 +177,11 @@ export function createClientStore(options: CreateClientStoreOptions): ClientStor
 
     setBet: (amount) => {
       client.setBet(amount);
+      client.confirmBet();
+    },
+
+    confirmBet: () => {
+      client.confirmBet();
     },
 
     startGame: () => {

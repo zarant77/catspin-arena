@@ -51,15 +51,13 @@ export function NameScreen(props: NameScreenProps) {
         <button type="button" onClick={handleSubmit} disabled={trimmedName.length === 0}>
           Continue
         </button>
-      </div>
 
-      {hasInitialValue ? (
-        <div className="name-secondary">
+        {hasInitialValue ? (
           <button type="button" onClick={handleCancel}>
             Cancel
           </button>
-        </div>
-      ) : null}
+        ) : null}
+      </div>
     </Section>
   );
 }

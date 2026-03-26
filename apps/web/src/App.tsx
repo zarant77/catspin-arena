@@ -7,6 +7,7 @@ import { NameScreen } from './components/screens/NameScreen';
 import { RoomSetupScreen } from './components/screens/RoomSetupScreen';
 import { LobbyScreen } from './components/screens/LobbyScreen';
 import { GameScreen } from './components/screens/game/GameScreen';
+import { WinScreen } from './components/screens/WinScreen';
 import { Header } from './components/layout/Header';
 
 import './styles/index.css';
@@ -85,29 +86,12 @@ export default function App() {
     const roomIdFromHash = getRoomIdFromHash();
     const name = state.playerName?.trim() ?? '';
 
-    if (!roomIdFromHash) {
-      return;
-    }
-
-    if (name.length === 0) {
-      return;
-    }
-
-    if (isEditingName) {
-      return;
-    }
-
-    if (state.connectionStatus !== 'connected') {
-      return;
-    }
-
-    if (state.room !== null) {
-      return;
-    }
-
-    if (autoJoinAttemptedRef.current) {
-      return;
-    }
+    if (!roomIdFromHash) return;
+    if (name.length === 0) return;
+    if (isEditingName) return;
+    if (state.connectionStatus !== 'connected') return;
+    if (state.room !== null) return;
+    if (autoJoinAttemptedRef.current) return;
 
     autoJoinAttemptedRef.current = true;
 
@@ -126,10 +110,7 @@ export default function App() {
 
   const handleSetPlayerName = (name: string): void => {
     const trimmedName = name.trim();
-
-    if (trimmedName.length === 0) {
-      return;
-    }
+    if (trimmedName.length === 0) return;
 
     store.setPlayerName(trimmedName);
     setIsEditingName(false);
@@ -142,19 +123,13 @@ export default function App() {
   };
 
   const handleCancelEditingName = (): void => {
-    if (trimmedPlayerName.length === 0) {
-      return;
-    }
-
+    if (trimmedPlayerName.length === 0) return;
     setIsEditingName(false);
   };
 
   const handleCreateRoom = async (): Promise<void> => {
     const name = state.playerName?.trim() ?? '';
-
-    if (name.length === 0) {
-      return;
-    }
+    if (name.length === 0) return;
 
     try {
       const roomId = await store.createRoom();
@@ -176,9 +151,7 @@ export default function App() {
     const roomId = roomInput.trim();
     const name = state.playerName?.trim() ?? '';
 
-    if (roomId.length === 0 || name.length === 0) {
-      return;
-    }
+    if (roomId.length === 0 || name.length === 0) return;
 
     setRoomIdHash(roomId);
     autoJoinAttemptedRef.current = true;
@@ -215,15 +188,15 @@ export default function App() {
         ) : null}
 
         <main className="stack">
-          {screen === 'name' ? (
+          {screen === 'name' && (
             <NameScreen
               initialValue={state.playerName ?? ''}
               onSubmit={handleSetPlayerName}
               onCancel={handleCancelEditingName}
             />
-          ) : null}
+          )}
 
-          {screen === 'room_setup' ? (
+          {screen === 'room_setup' && (
             <RoomSetupScreen
               roomInput={roomInput}
               onRoomInputChange={(value) => {
@@ -235,9 +208,9 @@ export default function App() {
               canCreate={canCreate}
               canJoin={canJoin}
             />
-          ) : null}
+          )}
 
-          {screen === 'lobby' && state.room !== null ? (
+          {screen === 'lobby' && state.room !== null && (
             <LobbyScreen
               room={state.room}
               playerId={state.playerId}
@@ -248,9 +221,9 @@ export default function App() {
               onStartGame={() => store.startGame()}
               onLeaveRoom={handleLeaveRoom}
             />
-          ) : null}
+          )}
 
-          {screen === 'game' && state.room !== null ? (
+          {screen === 'game' && state.room !== null && (
             <GameScreen
               room={state.room}
               playerId={state.playerId}
@@ -261,9 +234,11 @@ export default function App() {
               onSetBet={() => store.setBet(betInput)}
               onLeaveRoom={handleLeaveRoom}
             />
-          ) : null}
+          )}
         </main>
       </div>
+
+      <WinScreen room={state.room} playerId={state.playerId} onLeaveRoom={handleLeaveRoom} />
     </div>
   );
 }

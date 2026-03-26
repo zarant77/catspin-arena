@@ -154,6 +154,22 @@ function handleBet(context: ConnectionContext, event: Extract<ClientEvent, { typ
   context.currentRoom.setBet(event.playerId, event.amount);
 }
 
+function handleConfirmBet(context: ConnectionContext, event: Extract<ClientEvent, { type: 'confirm_bet' }>): void {
+  if (context.currentRoom === null || context.currentPlayerId === null) {
+    return;
+  }
+
+  if (event.playerId !== context.currentPlayerId) {
+    send(context.socket, {
+      type: 'error',
+      message: 'Player mismatch',
+    });
+    return;
+  }
+
+  context.currentRoom.confirmBet(event.playerId);
+}
+
 function handleStart(context: ConnectionContext, event: Extract<ClientEvent, { type: 'start_game' }>): void {
   if (context.currentRoom === null || context.currentPlayerId === null) {
     return;
@@ -208,6 +224,9 @@ function isClientEvent(value: unknown): value is ClientEvent {
         Number.isFinite(event.amount)
       );
 
+    case 'confirm_bet':
+      return typeof event.playerId === 'string' && event.playerId.length > 0;
+
     case 'start_game':
       return typeof event.playerId === 'string' && event.playerId.length > 0;
 
@@ -255,6 +274,10 @@ export function registerSocketHandlers(socket: WebSocket, roomManager: RoomManag
 
         case 'set_bet':
           handleBet(context, event);
+          break;
+
+        case 'confirm_bet':
+          handleConfirmBet(context, event);
           break;
 
         case 'start_game':

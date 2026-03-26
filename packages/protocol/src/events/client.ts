@@ -22,9 +22,20 @@ export type SetBetEvent = {
   amount: number;
 };
 
+export type ConfirmBetEvent = {
+  type: 'confirm_bet';
+  playerId: string;
+};
+
 export type StartGameEvent = {
   type: 'start_game';
   playerId: string;
 };
 
-export type ClientEvent = JoinRoomEvent | LeaveRoomEvent | SetReadyEvent | SetBetEvent | StartGameEvent;
+export type ClientEvent =
+  | JoinRoomEvent
+  | LeaveRoomEvent
+  | SetReadyEvent
+  | SetBetEvent
+  | ConfirmBetEvent
+  | StartGameEvent;
