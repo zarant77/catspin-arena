@@ -50,13 +50,31 @@ function canStartGame(state: GameState): boolean {
   return connectedPlayers.every((player) => player.isReady === true);
 }
 
+function createPresentingRound(state: GameState, now: number): RoundState {
+  return {
+    index: state.round.index + 1,
+    status: 'presenting',
+    startedAt: null,
+    presentingAt: now,
+    bettingClosesAt: null,
+    spinAt: null,
+    resolvedAt: 0,
+    seed: state.rngState,
+    result: null,
+    winnerPlayerIds: [],
+    payoutAmount: 0,
+  };
+}
+
 function createBettingRound(state: GameState, now: number): RoundState {
   return {
     index: state.round.index + 1,
     status: 'betting',
     startedAt: now,
+    presentingAt: null,
     bettingClosesAt: now + state.config.bettingDurationMs,
     spinAt: null,
+    resolvedAt: 0,
     seed: state.rngState,
     result: null,
     winnerPlayerIds: [],
@@ -200,7 +218,7 @@ export function applyCommand(state: GameState, command: GameCommand): GameState 
         status: 'running',
         players: nextPlayers,
         startedPlayerCount,
-        round: createBettingRound(
+        round: createPresentingRound(
           {
             ...state,
             players: nextPlayers,

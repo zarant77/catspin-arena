@@ -14,6 +14,7 @@ export type {
   GameStateDTO,
   GameStatusDTO,
   PaylineDTO,
+  PaylinePresentationConfigDTO,
   RoundDTO,
   RoundStatusDTO,
   SpinResultDTO,

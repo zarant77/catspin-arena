@@ -4,12 +4,32 @@ import { SlotEngine } from '../engine/SlotEngine';
 import type { GameState } from '../game/GameState';
 import type { PlayerState } from '../game/Player';
 import type { RoundState, SpinResult } from '../game/Round';
+import type { PaylinePresentationConfig } from '../game/Rules';
 
-function createBettingRound(state: GameState, now: number): RoundState {
+function getPaylineSequenceDuration(linesCount: number, config: PaylinePresentationConfig): number {
+  if (linesCount <= 0) {
+    return 0;
+  }
+
+  return linesCount * config.lineDurationMs + Math.max(0, linesCount - 1) * config.lineGapMs + config.hideDelayMs;
+}
+
+function getPresentingDurationMs(state: GameState): number {
+  return getPaylineSequenceDuration(state.config.math.paylines.length, state.config.paylinePresentation);
+}
+
+function getResolvedDurationMs(state: GameState): number {
+  const winningLinesCount = state.round.result?.winningLines.length ?? 0;
+
+  return getPaylineSequenceDuration(winningLinesCount, state.config.paylinePresentation);
+}
+
+function createBettingRound(state: GameState, now: number, index: number): RoundState {
   return {
-    index: state.round.index + 1,
+    index,
     status: 'betting',
     startedAt: now,
+    presentingAt: null,
     bettingClosesAt: now + state.config.bettingDurationMs,
     spinAt: null,
     resolvedAt: 0,
@@ -18,6 +38,14 @@ function createBettingRound(state: GameState, now: number): RoundState {
     winnerPlayerIds: [],
     payoutAmount: 0,
   };
+}
+
+function createBettingPhaseForCurrentRound(state: GameState, now: number): RoundState {
+  return createBettingRound(state, now, state.round.index);
+}
+
+function createNextBettingRound(state: GameState, now: number): RoundState {
+  return createBettingRound(state, now, state.round.index + 1);
 }
 
 function sanitizeRoundBet(minBet: number, maxBet: number, player: PlayerState): number {
@@ -106,9 +134,7 @@ function resolveRoundOutcome(
     state.config.roundRules.payoutBasePolicy === 'highest-bet' ? highestBet * result.totalMultiplier : 0;
 
   const winnersCount = winnerPlayerIds.length;
-
   const baseShare = winnersCount > 0 && payoutAmount > 0 ? Math.floor(payoutAmount / winnersCount) : 0;
-
   const remainder = winnersCount > 0 && payoutAmount > 0 ? payoutAmount % winnersCount : 0;
 
   const nextPlayers = state.players.map((player) => {
@@ -121,10 +147,8 @@ function resolveRoundOutcome(
     }
 
     const bet = sanitizedPlayers.find((entry) => entry.player.id === player.id)?.bet ?? 0;
-
     const winnerIndex = winnerPlayerIds.indexOf(player.id);
     const extraChip = winnerIndex >= 0 && winnerIndex < remainder ? 1 : 0;
-
     const winAmount = winnerIndex >= 0 ? baseShare + extraChip : 0;
     const nextBalance = player.balance - bet + winAmount;
 
@@ -253,6 +277,20 @@ export function tickGame(state: GameState, now: number): GameState {
       return state;
     }
 
+    case 'presenting': {
+      const presentingAt = state.round.presentingAt;
+      const presentingDurationMs = getPresentingDurationMs(state);
+
+      if (presentingAt === null || now < presentingAt + presentingDurationMs) {
+        return state;
+      }
+
+      return {
+        ...state,
+        round: createBettingPhaseForCurrentRound(state, now),
+      };
+    }
+
     case 'betting': {
       const bettingClosesAt = state.round.bettingClosesAt;
       const shouldSpinNow = haveAllActivePlayersPlacedBets(state) || bettingClosesAt === null || now >= bettingClosesAt;
@@ -267,6 +305,7 @@ export function tickGame(state: GameState, now: number): GameState {
         round: {
           ...state.round,
           status: 'spinning',
+          presentingAt: null,
           spinAt: now,
           result: null,
           seed: state.rngState,
@@ -297,6 +336,7 @@ export function tickGame(state: GameState, now: number): GameState {
         round: {
           ...state.round,
           status: 'resolved',
+          presentingAt: null,
           bettingClosesAt: null,
           spinAt: null,
           resolvedAt: now,
@@ -309,8 +349,9 @@ export function tickGame(state: GameState, now: number): GameState {
 
     case 'resolved': {
       const resolvedAt = state.round.resolvedAt;
+      const resolvedDurationMs = getResolvedDurationMs(state);
 
-      if (now < resolvedAt + state.config.resolvedDurationMs) {
+      if (now < resolvedAt + resolvedDurationMs) {
         return state;
       }
 
@@ -338,7 +379,7 @@ export function tickGame(state: GameState, now: number): GameState {
       return {
         ...state,
         players: nextPlayers,
-        round: createBettingRound(
+        round: createNextBettingRound(
           {
             ...state,
             players: nextPlayers,

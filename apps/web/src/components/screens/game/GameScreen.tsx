@@ -83,16 +83,18 @@ export function GameScreen(props: GameScreenProps) {
             grid={displayGrid}
             paylines={state.room?.game.config.paylines ?? []}
             roundStatus={round.status}
+            roundIndex={round.index}
+            paylinePresentation={room.game.config.paylinePresentation}
             winningLines={winningLines}
           />
 
           <BetControls
-            value={betInput}
+            value={betInput || roomMinBet}
             disabled={!canPlaceBet}
             onChange={onBetInputChange}
             onSubmit={onSetBet}
             min={roomMinBet}
-            max={canPlaceBet ? effectiveMaxBet : roomMinBet}
+            max={effectiveMaxBet}
             step={roomMinBet}
           />
         </div>

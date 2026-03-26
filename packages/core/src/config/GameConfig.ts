@@ -16,9 +16,13 @@ export const DEFAULT_GAME_SETTINGS: GameSettings = {
   targetBalance: 200,
   bettingDurationMs: 10_000,
   spinDurationMs: 2_000,
-  resolvedDurationMs: 2_000,
   rows: 3,
   reels: 5,
+  paylinePresentation: {
+    lineDurationMs: 400,
+    lineGapMs: 100,
+    hideDelayMs: 100,
+  },
 };
 
 export const DEFAULT_MATH_PROFILE_ID: MathProfileId = 'high-rtp-test';
@@ -40,7 +44,6 @@ export function buildGameConfig(overrides?: GameConfigOverrides): GameConfig {
   }
 
   const mathProfileId = overrides.mathProfileId ?? DEFAULT_GAME_CONFIG.mathProfileId;
-
   const math = overrides.math ?? getMathConfig(mathProfileId);
 
   return {
@@ -49,6 +52,10 @@ export function buildGameConfig(overrides?: GameConfigOverrides): GameConfig {
     roundRules: {
       ...DEFAULT_GAME_CONFIG.roundRules,
       ...overrides.roundRules,
+    },
+    paylinePresentation: {
+      ...DEFAULT_GAME_CONFIG.paylinePresentation,
+      ...overrides.paylinePresentation,
     },
     mathProfileId,
     math,

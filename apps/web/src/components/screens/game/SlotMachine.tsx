@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { SymbolIdDTO, WinningLineDTO, RoundStatusDTO } from '@catspin/protocol';
+import type { SymbolIdDTO, WinningLineDTO, RoundStatusDTO, PaylinePresentationConfigDTO } from '@catspin/protocol';
 import { SLOT_SYMBOL_IDS, SLOT_SYMBOL_VIEW } from './slotSymbols';
 import { SlotPaylinesOverlay } from './SlotPaylinesOverlay';
 
@@ -7,6 +7,8 @@ type SlotMachineProps = {
   readonly grid: readonly (readonly SymbolIdDTO[])[];
   readonly paylines: readonly (readonly number[])[];
   readonly roundStatus: RoundStatusDTO;
+  readonly roundIndex: number;
+  readonly paylinePresentation: PaylinePresentationConfigDTO;
   readonly winningLines: readonly WinningLineDTO[];
 };
 
@@ -68,12 +70,7 @@ function getWinningCellSet(
   winningLines: readonly WinningLineDTO[],
   rows: number,
   cols: number,
-  overlayMode: PaylinesOverlayMode,
 ): ReadonlySet<string> {
-  if (overlayMode !== 'winning') {
-    return new Set<string>();
-  }
-
   const cells = new Set<string>();
 
   winningLines.forEach((line) => {
@@ -104,14 +101,13 @@ function getWinningCellSet(
 }
 
 export function SlotMachine(props: SlotMachineProps) {
-  const { grid, paylines, roundStatus, winningLines } = props;
+  const { grid, paylines, roundStatus, roundIndex, paylinePresentation, winningLines } = props;
 
   const normalizedGrid = useMemo<SymbolIdDTO[][] | null>(() => {
     return normalizeGrid(grid);
   }, [grid]);
 
   const lastValidGridRef = useRef<SymbolIdDTO[][]>(createRandomGrid(3, 5));
-  const hasShownInitialPaylinesRef = useRef(false);
 
   if (normalizedGrid !== null) {
     lastValidGridRef.current = normalizedGrid;
@@ -122,30 +118,31 @@ export function SlotMachine(props: SlotMachineProps) {
   const [overlayMode, setOverlayMode] = useState<PaylinesOverlayMode>('hidden');
   const [overlayAnimationKey, setOverlayAnimationKey] = useState(0);
 
-  const prevStatusRef = useRef<RoundStatusDTO>(roundStatus);
-
-  useEffect(() => {
-    if (hasShownInitialPaylinesRef.current) {
-      return;
-    }
-
-    if (paylines.length === 0) {
-      return;
-    }
-
-    if (roundStatus === 'spinning') {
-      return;
-    }
-
-    hasShownInitialPaylinesRef.current = true;
-    setOverlayMode('all');
-    setOverlayAnimationKey((value) => value + 1);
-  }, [roundStatus, paylines.length]);
+  const prevStatusRef = useRef<RoundStatusDTO | null>(null);
+  const hasShownIntroRef = useRef(false);
 
   useEffect(() => {
     const previousStatus = prevStatusRef.current;
+
+    const isIntroRound = roundIndex === 1;
+    const firstRenderInPresenting = previousStatus === null && roundStatus === 'presenting';
+    const enteredPresenting = previousStatus !== 'presenting' && roundStatus === 'presenting';
+    const leftPresenting = previousStatus === 'presenting' && roundStatus !== 'presenting';
     const enteredSpinning = previousStatus !== 'spinning' && roundStatus === 'spinning';
     const enteredResolved = previousStatus !== 'resolved' && roundStatus === 'resolved';
+    const leftResolved = previousStatus === 'resolved' && roundStatus !== 'resolved';
+
+    if ((firstRenderInPresenting || enteredPresenting) && isIntroRound && hasShownIntroRef.current === false) {
+      hasShownIntroRef.current = true;
+      setDisplayWinningLines([]);
+      setOverlayMode('all');
+      setOverlayAnimationKey((value) => value + 1);
+    }
+
+    if (leftPresenting) {
+      setOverlayMode('hidden');
+      setDisplayWinningLines([]);
+    }
 
     if (enteredSpinning) {
       setOverlayMode('hidden');
@@ -168,12 +165,16 @@ export function SlotMachine(props: SlotMachineProps) {
       }
     }
 
+    if (leftResolved) {
+      setOverlayMode('hidden');
+    }
+
     if (roundStatus !== 'spinning' && normalizedGrid !== null) {
       setDisplayGrid(normalizedGrid);
     }
 
     prevStatusRef.current = roundStatus;
-  }, [roundStatus, normalizedGrid, winningLines]);
+  }, [roundStatus, roundIndex, normalizedGrid, winningLines]);
 
   useEffect(() => {
     if (roundStatus !== 'spinning') {
@@ -197,8 +198,8 @@ export function SlotMachine(props: SlotMachineProps) {
   const cols = displayGrid[0]?.length ?? 0;
 
   const winningCells = useMemo(() => {
-    return getWinningCellSet(paylines, displayWinningLines, rows, cols, overlayMode);
-  }, [paylines, displayWinningLines, rows, cols, overlayMode]);
+    return getWinningCellSet(paylines, displayWinningLines, rows, cols);
+  }, [paylines, displayWinningLines, rows, cols]);
 
   const hasRenderableGrid = displayGrid.length > 0;
 
@@ -248,8 +249,11 @@ export function SlotMachine(props: SlotMachineProps) {
             winningLines={displayWinningLines}
             mode={overlayMode}
             animationKey={overlayAnimationKey}
+            presentation={paylinePresentation}
             onSequenceComplete={() => {
-              setOverlayMode('hidden');
+              if (prevStatusRef.current === 'resolved') {
+                setOverlayMode('hidden');
+              }
             }}
           />
         </div>

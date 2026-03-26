@@ -7,6 +7,11 @@ export type PublicGameConfig = {
   readonly bettingDurationMs: number;
   readonly spinDurationMs: number;
   readonly paylines: readonly Payline[];
+  readonly paylinePresentation: {
+    readonly lineDurationMs: number;
+    readonly lineGapMs: number;
+    readonly hideDelayMs: number;
+  };
 };
 
 export type PublicPlayerState = {
@@ -100,6 +105,7 @@ export function getPublicState(state: GameState): PublicGameState {
       bettingDurationMs: state.config.bettingDurationMs,
       spinDurationMs: state.config.spinDurationMs,
       paylines: state.config.math.paylines,
+      paylinePresentation: state.config.paylinePresentation,
     },
   };
 }

@@ -2,7 +2,7 @@ import type { MathProfileId, SlotMathConfig } from '../config/MathConfig';
 
 export type GameStatus = 'lobby' | 'running' | 'finished';
 
-export type RoundStatus = 'idle' | 'betting' | 'spinning' | 'resolved';
+export type RoundStatus = 'idle' | 'presenting' | 'betting' | 'spinning' | 'resolved';
 
 export type SymbolId = 'L1' | 'L2' | 'L3' | 'L4' | 'M1' | 'M2' | 'H1' | 'H2';
 
@@ -22,6 +22,12 @@ export type RoundRules = {
   readonly payoutBasePolicy: PayoutBasePolicy;
 };
 
+export type PaylinePresentationConfig = {
+  readonly lineDurationMs: number;
+  readonly lineGapMs: number;
+  readonly hideDelayMs: number;
+};
+
 export type GameSettings = {
   readonly startBalance: number;
   readonly minBet: number;
@@ -29,9 +35,9 @@ export type GameSettings = {
   readonly targetBalance: number;
   readonly bettingDurationMs: number;
   readonly spinDurationMs: number;
-  readonly resolvedDurationMs: number;
   readonly rows: number;
   readonly reels: number;
+  readonly paylinePresentation: PaylinePresentationConfig;
 };
 
 export type GameConfig = GameSettings & {

@@ -1,10 +1,10 @@
 import { useRef } from 'react';
 
 type BetControlsProps = {
-  readonly value?: number;
-  readonly min?: number;
+  readonly value: number;
+  readonly min: number;
   readonly max: number;
-  readonly step?: number;
+  readonly step: number;
   readonly disabled: boolean;
   readonly onChange: (value: number) => void;
   readonly onSubmit: () => void;
@@ -19,20 +19,17 @@ function clamp(value: number, min: number, max: number): number {
 }
 
 export function BetControls(props: BetControlsProps) {
-  const { value, min = 1, max, step = 1, disabled, onChange, onSubmit } = props;
+  const { value, min, max, step, disabled, onChange, onSubmit } = props;
 
   const stackRef = useRef<HTMLDivElement | null>(null);
 
-  const safeMax = Math.max(min, max);
-  const safeStep = Math.max(1, step);
-  const safeValue = clamp(value ?? min, min, safeMax);
-  const stepsCount = Math.floor((safeMax - min) / safeStep) + 1;
+  const stepsCount = Math.floor((max - min) / step) + 1;
 
   const getValueFromPointer = (clientX: number, clientY: number): number => {
     const element = stackRef.current;
 
     if (element === null) {
-      return safeValue;
+      return value;
     }
 
     const rect = element.getBoundingClientRect();
@@ -44,7 +41,7 @@ export function BetControls(props: BetControlsProps) {
       const rawIndex = Math.round(ratio * (stepsCount - 1));
       const index = clamp(rawIndex, 0, stepsCount - 1);
 
-      return min + index * safeStep;
+      return min + index * step;
     }
 
     const offsetY = clamp(clientY - rect.top, 0, rect.height);
@@ -52,7 +49,7 @@ export function BetControls(props: BetControlsProps) {
     const rawIndex = Math.round(ratioFromBottom * (stepsCount - 1));
     const index = clamp(rawIndex, 0, stepsCount - 1);
 
-    return min + index * safeStep;
+    return min + index * step;
   };
 
   const updateFromPointer = (clientX: number, clientY: number): void => {
@@ -91,8 +88,8 @@ export function BetControls(props: BetControlsProps) {
   };
 
   const steps = Array.from({ length: stepsCount }, (_, index) => {
-    const itemValue = min + index * safeStep;
-    const active = itemValue <= safeValue;
+    const itemValue = min + index * step;
+    const active = itemValue <= value;
 
     return <div key={itemValue} className={active ? 'bet-step is-active' : 'bet-step'} />;
   });
@@ -104,8 +101,8 @@ export function BetControls(props: BetControlsProps) {
         className="bet-stack"
         role="slider"
         aria-valuemin={min}
-        aria-valuemax={safeMax}
-        aria-valuenow={safeValue}
+        aria-valuemax={max}
+        aria-valuenow={value}
         aria-disabled={disabled}
         data-disabled={disabled}
         onPointerDown={handlePointerDown}
@@ -113,7 +110,7 @@ export function BetControls(props: BetControlsProps) {
         onPointerUp={handlePointerUp}
       >
         {steps}
-        <div className="bet-value">{safeValue}</div>
+        <div className="bet-value">{value}</div>
       </div>
     </div>
   );

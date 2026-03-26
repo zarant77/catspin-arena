@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import type { WinningLineDTO } from '@catspin/protocol';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import type { WinningLineDTO, PaylinePresentationConfigDTO } from '@catspin/protocol';
 
 type SlotPaylinesOverlayMode = 'hidden' | 'all' | 'winning';
 
@@ -10,6 +10,7 @@ type SlotPaylinesOverlayProps = {
   readonly winningLines: readonly WinningLineDTO[];
   readonly mode: SlotPaylinesOverlayMode;
   readonly animationKey: number;
+  readonly presentation: PaylinePresentationConfigDTO;
   readonly onSequenceComplete?: () => void;
 };
 
@@ -24,10 +25,6 @@ type AnimatedLine = {
   readonly isWinning: boolean;
   readonly points: readonly Point[];
 };
-
-const LINE_DURATION_MS = 700;
-const LINE_GAP_MS = 120;
-const HIDE_DELAY_MS = 500;
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
@@ -191,7 +188,17 @@ function buildAnimatedLines(
 }
 
 export function SlotPaylinesOverlay(props: SlotPaylinesOverlayProps) {
-  const { paylines, rows, cols, winningLines, mode, animationKey, onSequenceComplete } = props;
+  const { paylines, rows, cols, winningLines, mode, animationKey, presentation, onSequenceComplete } = props;
+
+  const lineDurationMs = presentation.lineDurationMs;
+  const lineGapMs = presentation.lineGapMs;
+  const hideDelayMs = presentation.hideDelayMs;
+
+  const onSequenceCompleteRef = useRef<(() => void) | undefined>(onSequenceComplete);
+
+  useEffect(() => {
+    onSequenceCompleteRef.current = onSequenceComplete;
+  }, [onSequenceComplete]);
 
   const animatedLines = useMemo(() => {
     return buildAnimatedLines(mode, paylines, winningLines, rows, cols);
@@ -229,7 +236,7 @@ export function SlotPaylinesOverlay(props: SlotPaylinesOverlayProps) {
         }
 
         const elapsed = now - lineStartTime;
-        const nextProgress = clamp(elapsed / LINE_DURATION_MS, 0, 1);
+        const nextProgress = clamp(elapsed / lineDurationMs, 0, 1);
 
         setProgress(nextProgress);
 
@@ -249,8 +256,8 @@ export function SlotPaylinesOverlay(props: SlotPaylinesOverlayProps) {
             setIsVisible(false);
             setActiveLineIndex(-1);
             setProgress(0);
-            onSequenceComplete?.();
-          }, HIDE_DELAY_MS);
+            onSequenceCompleteRef.current?.();
+          }, hideDelayMs);
 
           return;
         }
@@ -261,7 +268,7 @@ export function SlotPaylinesOverlay(props: SlotPaylinesOverlayProps) {
           }
 
           runLine(lineIndex + 1);
-        }, LINE_GAP_MS);
+        }, lineGapMs);
       };
 
       frameId = window.requestAnimationFrame(tick);
@@ -274,7 +281,7 @@ export function SlotPaylinesOverlay(props: SlotPaylinesOverlayProps) {
       window.cancelAnimationFrame(frameId);
       window.clearTimeout(timeoutId);
     };
-  }, [mode, animationKey, animatedLines, onSequenceComplete]);
+  }, [mode, animationKey, animatedLines, lineDurationMs, lineGapMs, hideDelayMs]);
 
   if (!isVisible || animatedLines.length === 0) {
     return null;

@@ -1,10 +1,16 @@
 import type { PlayerDTO } from './PlayerDTO';
 
 export type GameStatusDTO = 'lobby' | 'running' | 'finished';
-export type RoundStatusDTO = 'idle' | 'betting' | 'spinning' | 'resolved';
+export type RoundStatusDTO = 'idle' | 'presenting' | 'betting' | 'spinning' | 'resolved';
 export type SymbolIdDTO = 'L1' | 'L2' | 'L3' | 'L4' | 'M1' | 'M2' | 'H1' | 'H2';
 
 export type PaylineDTO = number[];
+
+export type PaylinePresentationConfigDTO = {
+  readonly lineDurationMs: number;
+  readonly lineGapMs: number;
+  readonly hideDelayMs: number;
+};
 
 export type WinningLineDTO = {
   readonly lineIndex: number;
@@ -36,6 +42,7 @@ export type GameConfigDTO = {
   readonly bettingDurationMs: number;
   readonly spinDurationMs: number;
   readonly paylines: PaylineDTO[];
+  readonly paylinePresentation: PaylinePresentationConfigDTO;
 };
 
 export type GameStateDTO = {
