@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import type { RoomDTO } from '@catspin/protocol';
 import { useClientStoreState } from '../../../state/storeContext';
 import type { PlayerView } from '../../../types/playerView';
@@ -12,10 +13,8 @@ type GameScreenProps = {
   readonly room: RoomDTO;
   readonly playerId: string | null;
   readonly currentPlayer: PlayerView | null;
-  readonly betInput: number;
   readonly serverTimeOffsetMs: number;
-  readonly onBetInputChange: (value: number) => void;
-  readonly onSetBet: () => void;
+  readonly onSetBet: (value: number) => void;
   readonly onLeaveRoom: () => void;
 };
 
@@ -36,8 +35,9 @@ function getPlayersWaitingForBet(room: RoomDTO): readonly PlayerView[] {
 }
 
 export function GameScreen(props: GameScreenProps) {
-  const { room, playerId, currentPlayer, betInput, onBetInputChange, onSetBet, onLeaveRoom, serverTimeOffsetMs } =
-    props;
+  const { room, playerId, currentPlayer, onSetBet, onLeaveRoom, serverTimeOffsetMs } = props;
+
+  const [betInput, setBetInput] = useState<number>(0);
 
   const state = useClientStoreState();
 
@@ -55,6 +55,10 @@ export function GameScreen(props: GameScreenProps) {
   const roomMinBet = room.game.config.minBet;
   const roomMaxBet = room.game.config.maxBet;
   const balance = currentPlayer?.balance ?? 0;
+
+  useEffect(() => {
+    setBetInput(currentPlayer?.currentBet ?? roomMinBet);
+  }, [currentPlayer?.currentBet]);
 
   const effectiveMaxBet = Math.min(roomMaxBet, balance);
   const canPlaceBet =
@@ -89,10 +93,10 @@ export function GameScreen(props: GameScreenProps) {
           />
 
           <BetControls
-            value={betInput || roomMinBet}
+            value={betInput}
             disabled={!canPlaceBet}
-            onChange={onBetInputChange}
-            onSubmit={onSetBet}
+            onChange={setBetInput}
+            onSubmit={() => onSetBet(betInput)}
             min={roomMinBet}
             max={effectiveMaxBet}
             step={roomMinBet}

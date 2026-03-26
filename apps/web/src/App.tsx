@@ -47,7 +47,6 @@ export default function App() {
   const state = useClientStoreState();
 
   const [roomInput, setRoomInput] = useState<string>(() => getRoomIdFromHash() ?? '');
-  const [betInput, setBetInput] = useState<number>(0);
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
 
   const autoJoinAttemptedRef = useRef(false);
@@ -228,10 +227,8 @@ export default function App() {
               room={state.room}
               playerId={state.playerId}
               currentPlayer={currentPlayer}
-              betInput={betInput}
               serverTimeOffsetMs={state.serverTimeOffsetMs}
-              onBetInputChange={setBetInput}
-              onSetBet={() => store.setBet(betInput)}
+              onSetBet={(bet) => store.setBet(bet)}
               onLeaveRoom={handleLeaveRoom}
             />
           )}
