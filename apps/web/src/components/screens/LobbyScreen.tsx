@@ -40,28 +40,50 @@ export function LobbyScreen(props: LobbyScreenProps) {
       }
     >
       <ul className="players">
-        {players.map((player) => (
-          <li key={player.id} className="player" data-current={player.id === playerId} data-online={player.isConnected}>
-            <div className="player-row">
-              <div className="player-left">
-                <Avatar size="md" value={player.avatar} />
-                <span className="player-name">{player.name}</span>
+        {players.map((player) => {
+          const isCurrentPlayer = player.id === playerId;
+          const isHostPlayer = room.game.hostPlayerId === player.id;
 
-                {player.id === playerId ? <span className="badge">you</span> : null}
+          return (
+            <li key={player.id} className="player" data-current={isCurrentPlayer} data-online={player.isConnected}>
+              <div className="player-card">
+                <div className="player-avatar">
+                  <Avatar size="lg" value={player.avatar} mood={player.isReady ? 'lose' : 'neutral'} />
+                  <span
+                    className="status-dot"
+                    data-state={player.isConnected ? 'connected' : 'disconnected'}
+                    aria-label={player.isConnected ? 'online' : 'offline'}
+                    title={player.isConnected ? 'Online' : 'Offline'}
+                  />
+                </div>
 
-                {room.game.hostPlayerId === player.id ? <span className="badge">host</span> : null}
+                <div className="player-content">
+                  <div className="player-top">
+                    <span className="player-name" title={player.name}>
+                      {player.name}
+                    </span>
+
+                    {isCurrentPlayer ? <span className="badge player-you-badge">you</span> : null}
+                  </div>
+
+                  <div className="player-bottom">
+                    <div className="player-meta">
+                      {isHostPlayer ? <span className="badge player-host-badge">host</span> : null}
+                    </div>
+
+                    <div className="player-state">
+                      <span
+                        className={player.isReady ? 'badge is-success player-ready-badge' : 'badge player-ready-badge'}
+                      >
+                        {player.isReady ? 'ready' : 'not ready'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
-
-              <div className="player-right">
-                <span className={player.isReady ? 'badge is-success' : 'badge'}>
-                  {player.isReady ? 'ready' : 'not ready'}
-                </span>
-
-                <span className="status-dot" data-state={player.isConnected ? 'connected' : 'disconnected'} />
-              </div>
-            </div>
-          </li>
-        ))}
+            </li>
+          );
+        })}
       </ul>
     </Section>
   );

@@ -3,17 +3,26 @@ import { useEffect, useState } from 'react';
 type AvatarProps = {
   readonly value: string;
   readonly size?: 'sm' | 'md' | 'lg';
-  readonly isWin?: boolean;
+  readonly mood?: 'neutral' | 'win' | 'lose';
 };
 
 const PATH = '/assets/avatars';
 
-export function Avatar({ value, size = 'sm', isWin = false }: AvatarProps) {
-  const [showWin, setShowWin] = useState(isWin);
+const SUFFIX = {
+  neutral: 'n',
+  win: 'w',
+  lose: 'l',
+};
+
+export function Avatar({ value, size = 'sm', mood = 'neutral' }: AvatarProps) {
+  const [currentMood, setCurrentMood] = useState(mood);
 
   useEffect(() => {
-    if (!isWin) {
-      setShowWin(false);
+    // Reset immediately
+    setCurrentMood(mood);
+
+    // Animate only for "win"
+    if (mood !== 'win') {
       return;
     }
 
@@ -21,13 +30,13 @@ export function Avatar({ value, size = 'sm', isWin = false }: AvatarProps) {
 
     const interval = setInterval(() => {
       isAlt = !isAlt;
-      setShowWin(isAlt);
+      setCurrentMood(isAlt ? 'win' : 'neutral');
     }, 400);
 
     return () => clearInterval(interval);
-  }, [isWin]);
+  }, [mood]);
 
-  const suffix = showWin ? 'w' : 'n';
+  const suffix = SUFFIX[currentMood];
   const src = `${PATH}/${value}-${suffix}.png`;
 
   return (

@@ -15,7 +15,7 @@ export function PlayerItem({ player, isCurrent, isHost }: PlayerItemProps) {
       data-online={player.isConnected}
       data-eliminated={player.isEliminated}
     >
-      <Avatar size="lg" value={player.avatar} isWin={!!player.lastWin} />
+      <Avatar size="lg" value={player.avatar} mood={player.lastWin ? 'win' : 'neutral'} />
 
       <div className="player-content">
         <div className="player-top">

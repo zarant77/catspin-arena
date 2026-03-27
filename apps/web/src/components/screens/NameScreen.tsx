@@ -75,7 +75,7 @@ export function NameScreen(props: NameScreenProps) {
               onClick={() => setAvatar(item)}
               disabled={isSubmitting}
             >
-              <Avatar size="lg" value={item} isWin={selected && isSubmitting} />
+              <Avatar size="lg" value={item} mood={selected && isSubmitting ? 'win' : 'neutral'} />
             </button>
           );
         })}

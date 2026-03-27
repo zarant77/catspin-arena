@@ -55,7 +55,7 @@ export function WinScreen(props: WinScreenProps) {
         <h2 className="title">🏆 Winner</h2>
 
         <div className="player">
-          <Avatar value={winner.avatar} size="lg" isWin={true} />
+          <Avatar value={winner.avatar} size="lg" mood="win" />
           <div className="name">{winner.id === playerId ? 'You' : winner.name}</div>
           <div className="balance">{winner.balance}</div>
         </div>
