@@ -14,3 +14,5 @@ export {
   playMusic,
   stopMusic,
 } from './audio';
+
+export type { SoundId } from './sounds';

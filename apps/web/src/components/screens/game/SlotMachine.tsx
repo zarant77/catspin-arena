@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { SymbolIdDTO, WinningLineDTO, RoundStatusDTO, PaylinePresentationConfigDTO } from '@catspin/protocol';
-import { playSound } from '../../../audio/audio';
+import { playSound } from '../../../audio';
 import { SLOT_SYMBOL_IDS, SLOT_SYMBOL_VIEW } from './slotSymbols';
 import { SlotPaylinesOverlay } from './SlotPaylinesOverlay';
 
@@ -257,7 +257,7 @@ export function SlotMachine(props: SlotMachineProps) {
 
                   return (
                     <div key={`${rowIndex}-${colIndex}`} className="slot-cell" data-win={isWinningCell}>
-                      {SLOT_SYMBOL_VIEW[symbol]}
+                      <img src={SLOT_SYMBOL_VIEW[symbol]} alt={symbol} className="slot-symbol" draggable={false} />
                     </div>
                   );
                 })}

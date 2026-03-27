@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { playSound } from '../../../audio';
 
 type BetControlsProps = {
   readonly value: number;
@@ -57,7 +58,14 @@ export function BetControls(props: BetControlsProps) {
       return;
     }
 
-    onChange(getValueFromPointer(clientX, clientY));
+    const nextValue = getValueFromPointer(clientX, clientY);
+
+    if (nextValue === value) {
+      return;
+    }
+
+    playSound('bet');
+    onChange(nextValue);
   };
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>): void => {

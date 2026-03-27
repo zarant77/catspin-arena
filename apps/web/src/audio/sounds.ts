@@ -9,6 +9,10 @@ export const sounds = {
     src: 'assets/sfx/click.wav',
     volume: 1,
   },
+  bet: {
+    src: 'assets/sfx/bet.wav',
+    volume: 1,
+  },
   spin: {
     src: 'assets/sfx/spin.wav',
     volume: 0.7,
