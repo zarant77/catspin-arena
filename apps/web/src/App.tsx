@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { RoomDTO } from '@catspin/protocol';
+import { initAudio, unlockAudio } from './audio';
 import { useClientStore, useClientStoreState } from './state/storeContext';
 import { clearRoomIdHash, getRoomIdFromHash, setRoomIdHash } from './utils/roomHash';
 import type { PlayerView } from './types/playerView';
@@ -112,6 +113,21 @@ export default function App() {
       setRoomInput(state.room.id);
     }
   }, [state.room]);
+
+  useEffect(() => {
+    initAudio();
+
+    const unlock = () => {
+      unlockAudio();
+      window.removeEventListener('pointerdown', unlock);
+    };
+
+    window.addEventListener('pointerdown', unlock, { once: true });
+
+    return () => {
+      window.removeEventListener('pointerdown', unlock);
+    };
+  }, []);
 
   const handleOpenNameScreen = (): void => {
     setIsNameScreenOpen(true);

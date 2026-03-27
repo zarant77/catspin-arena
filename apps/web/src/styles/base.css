@@ -6,8 +6,8 @@ body,
 
 body {
   background:
-    radial-gradient(circle at top, rgba(245, 184, 46, 0.08), transparent 30%),
-    linear-gradient(180deg, #11141d 0%, #0b0e14 100%);
+    radial-gradient(circle at top, var(--color-accent-soft), transparent 30%),
+    linear-gradient(180deg, var(--color-bg-elevated) 0%, var(--color-bg) 100%);
   color: var(--color-text);
   font-family: var(--font-sans);
   line-height: var(--line-height);
@@ -26,7 +26,7 @@ strong {
 }
 
 ::selection {
-  background: rgba(124, 156, 255, 0.32);
+  background: var(--color-accent-soft);
 }
 
 :focus-visible {

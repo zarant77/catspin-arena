@@ -1,7 +1,7 @@
 .card,
 .connection-pill {
   border: 1px solid var(--color-border);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+  background: linear-gradient(180deg, var(--color-surface-strong), var(--color-surface));
   box-shadow: var(--shadow-sm);
   backdrop-filter: blur(12px);
 }
@@ -29,7 +29,10 @@
   color: var(--color-success);
   background: var(--color-success-soft);
 }
-
+.badge.is-warning {
+  color: var(--color-warning);
+  background: var(--color-warning-soft);
+}
 .badge.is-danger {
   color: var(--color-danger);
   background: var(--color-danger-soft);
@@ -40,7 +43,7 @@
   height: 8px;
   border-radius: 50%;
   background: var(--color-text-muted);
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.04);
+  box-shadow: 0 0 0 4px var(--color-surface);
 }
 
 .status-dot[data-state='connected'] {
@@ -82,8 +85,10 @@
 }
 
 .section-header h2 {
-  font-size: 1.1rem;
-  line-height: 1.2;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
 }
 
 .section-actions {

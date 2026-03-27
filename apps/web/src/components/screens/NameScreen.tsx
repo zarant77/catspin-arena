@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { playSound } from '../../audio';
 import { useClientStore, useClientStoreState } from '../../state/storeContext';
 import { Section } from '../layout/Section';
 import { Avatar } from '../common/Avatar';
@@ -33,6 +34,8 @@ export function NameScreen(props: NameScreenProps) {
     state.playerAvatar = avatar;
 
     store.setPlayerInfo(name, avatar);
+
+    playSound('happy_meow');
 
     setTimeout(() => {
       setIsSubmitting(false);

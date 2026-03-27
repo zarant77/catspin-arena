@@ -7,7 +7,7 @@
 
   overflow: hidden;
 
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--color-surface);
 
   transition:
     transform 0.15s ease,
@@ -54,17 +54,17 @@
   height: auto;
   padding: 0;
 
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
 
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--color-surface);
   cursor: pointer;
 }
 
 .avatar-grid button.avatar:hover {
   transform: translateY(-2px) scale(1.05);
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.25);
+  background: var(--color-surface-strong);
+  border-color: var(--color-border-strong);
 }
 
 .avatar-grid button.avatar:hover img {
@@ -72,9 +72,9 @@
 }
 
 .avatar-grid button.avatar.selected {
-  border-color: #ffd700;
-  background: rgba(255, 215, 0, 0.12);
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+  border-color: var(--color-brand);
+  background: var(--color-warning-soft);
+  box-shadow: 0 0 10px var(--color-warning-soft);
   transform: scale(1.1);
 }
 

@@ -313,6 +313,7 @@
 
   <script>
     (function () {
+      const SFW_PATH = './assets/sfx';
       const splash = document.getElementById('splash');
 
       if (!splash) {
@@ -324,6 +325,7 @@
       const splashFadeDurationMs = 500;
 
       const IMPACT_VOLUME = 0.1;
+      const WELCOME_VOLUME = 1;
 
       const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -338,11 +340,11 @@
       }
 
       async function initAudio() {
-        impactBuffer = await loadAudioBuffer('./assets/impact.mp3');
+        impactBuffer = await loadAudioBuffer(`${SFW_PATH}/impact.mp3`);
 
-        welcomeAudio = new Audio('./assets/welcome.mp3');
+        welcomeAudio = new Audio(`${SFW_PATH}/welcome.mp3`);
         welcomeAudio.preload = 'auto';
-        welcomeAudio.volume = 1;
+        welcomeAudio.volume = WELCOME_VOLUME;
         welcomeAudio.load();
       }
 
@@ -350,7 +352,7 @@
         if (!welcomeAudio) return;
 
         welcomeAudio.currentTime = 0;
-        welcomeAudio.volume = 1;
+        welcomeAudio.volume = WELCOME_VOLUME;
         welcomeAudio.play().catch(() => { });
       }
 
@@ -412,9 +414,9 @@
       }
 
       initAudio().catch(() => {
-        welcomeAudio = new Audio('./assets/welcome.mp3');
+        welcomeAudio = new Audio(`${SFW_PATH}/welcome.mp3`);
         welcomeAudio.preload = 'auto';
-        welcomeAudio.volume = 1;
+        welcomeAudio.volume = WELCOME_VOLUME;
         welcomeAudio.load();
       });
 

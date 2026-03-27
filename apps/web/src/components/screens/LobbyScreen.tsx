@@ -73,7 +73,9 @@ export function LobbyScreen(props: LobbyScreenProps) {
 
                     <div className="player-state">
                       <span
-                        className={player.isReady ? 'badge is-success player-ready-badge' : 'badge player-ready-badge'}
+                        className={
+                          player.isReady ? 'badge is-success player-ready-badge' : 'badge is-warning player-ready-badge'
+                        }
                       >
                         {player.isReady ? 'ready' : 'not ready'}
                       </span>
