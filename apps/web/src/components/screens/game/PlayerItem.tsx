@@ -1,4 +1,5 @@
 import type { PlayerView } from '../../../types/playerView';
+import { Avatar } from '../../common/Avatar';
 
 type PlayerItemProps = {
   readonly player: PlayerView;
@@ -14,26 +15,36 @@ export function PlayerItem({ player, isCurrent, isHost }: PlayerItemProps) {
       data-online={player.isConnected}
       data-eliminated={player.isEliminated}
     >
-      <div className="player-top">
-        <div className="player-tags">
-          <span className="player-name">{player.name}</span>
-          {isCurrent ? <span className="badge">you</span> : null}
-          {isHost ? <span className="badge">host</span> : null}
-          {player.isEliminated ? <span className="badge is-danger">out</span> : null}
+      <Avatar size="md" value={player.avatar} />
+
+      <div className="player-content">
+        <div className="player-header">
+          <span className="player-name" title={player.name}>
+            {player.name}
+          </span>
+
+          <div className="player-badges">
+            {isCurrent && <span className="badge">you</span>}
+            {isHost && <span className="badge">host</span>}
+            {player.isEliminated && <span className="badge is-danger">out</span>}
+            <span className={`badge ${player.isReady ? 'is-success' : ''}`}>
+              {player.isReady ? 'ready' : 'not ready'}
+            </span>
+          </div>
+
+          <span
+            className="status-dot"
+            data-state={player.isConnected ? 'connected' : 'disconnected'}
+            aria-label={player.isConnected ? 'online' : 'offline'}
+            title={player.isConnected ? 'online' : 'offline'}
+          />
         </div>
 
-        <span
-          className="status-dot"
-          data-state={player.isConnected ? 'connected' : 'disconnected'}
-          aria-label={player.isConnected ? 'online' : 'offline'}
-          title={player.isConnected ? 'online' : 'offline'}
-        />
-      </div>
-
-      <div className="player-values">
-        <span>Bal {player.balance}</span>
-        <span>Bet {player.currentBet}</span>
-        <span>Win {player.lastWin}</span>
+        <div className="player-values">
+          <span>Bal {player.balance}</span>
+          <span>Bet {player.currentBet}</span>
+          <span>Win {player.lastWin}</span>
+        </div>
       </div>
     </li>
   );

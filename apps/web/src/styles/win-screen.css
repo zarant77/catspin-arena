@@ -24,7 +24,7 @@
   animation: win-card-pop-in 280ms ease-out;
 }
 
-.win-label {
+.win-card .label {
   margin-bottom: 10px;
   color: rgba(255, 255, 255, 0.68);
   font-size: 12px;
@@ -34,7 +34,7 @@
   text-transform: uppercase;
 }
 
-.win-title {
+.win-card .title {
   margin: 0;
   color: #ffffff;
   font-size: clamp(28px, 4vw, 40px);
@@ -42,14 +42,18 @@
   line-height: 1.05;
 }
 
-.win-player {
+.win-card .player {
   margin-top: 20px;
   padding: 18px 16px;
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.06);
 }
 
-.win-name {
+.win-card .player .avatar {
+  margin: 0 auto 10px auto;
+}
+
+.win-card .player .name {
   color: #ffffff;
   font-size: 24px;
   font-weight: 800;
@@ -57,7 +61,7 @@
   word-break: break-word;
 }
 
-.win-balance {
+.win-card .player .balance {
   margin-top: 8px;
   color: #9fe870;
   font-size: 18px;

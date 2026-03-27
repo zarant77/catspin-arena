@@ -8,7 +8,7 @@ type NameScreenProps = {
   readonly onClose: () => void;
 };
 
-const AVATARS = ['🐱', '🐈', '🐈‍⬛', '😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾'];
+const AVATARS = ['cat-1', 'cat-2', 'cat-3'];
 
 export function NameScreen(props: NameScreenProps) {
   const { isOpen, onClose } = props;
@@ -18,23 +18,31 @@ export function NameScreen(props: NameScreenProps) {
 
   const [name, setName] = useState(state.playerName);
   const [avatar, setAvatar] = useState(state.playerAvatar || AVATARS[0]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const canSubmit = useMemo(() => {
     return name.trim().length > 0;
   }, [name]);
 
   const handleSubmit = (): void => {
-    if (!canSubmit) return;
+    if (!canSubmit || isSubmitting) return;
+
+    setIsSubmitting(true);
 
     state.playerName = name;
     state.playerAvatar = avatar;
 
     store.setPlayerInfo(name, avatar);
 
-    onClose();
+    setTimeout(() => {
+      setIsSubmitting(false);
+      onClose();
+    }, 1000);
   };
 
   const handleCancel = (): void => {
+    if (isSubmitting) return;
+
     setName(state.playerName);
     setAvatar(state.playerAvatar || AVATARS[0]);
     onClose();
@@ -51,32 +59,40 @@ export function NameScreen(props: NameScreenProps) {
           onChange={(e) => setName(e.target.value)}
           placeholder="Type your name..."
           maxLength={24}
+          disabled={isSubmitting}
         />
       </div>
 
       <div className="avatar-grid">
-        {AVATARS.map((emoji) => {
-          const selected = avatar === emoji;
+        {AVATARS.map((item) => {
+          const selected = avatar === item;
+
+          const mood = selected && isSubmitting ? 'win' : 'neutral';
 
           return (
             <button
-              key={emoji}
+              key={item}
               type="button"
               className={selected ? 'avatar selected' : 'avatar'}
-              onClick={() => setAvatar(emoji)}
+              onClick={() => setAvatar(item)}
+              disabled={isSubmitting}
             >
-              <Avatar size='lg' value={emoji} />
+              <Avatar size="lg" value={item} mood={mood} />
             </button>
           );
         })}
       </div>
 
       <div className="actions">
-        <button onClick={handleSubmit} disabled={!canSubmit}>
+        <button onClick={handleSubmit} disabled={!canSubmit || isSubmitting}>
           Continue
         </button>
 
-        {name.length > 0 && <button onClick={handleCancel}>Cancel</button>}
+        {name.length > 0 && (
+          <button onClick={handleCancel} disabled={isSubmitting}>
+            Cancel
+          </button>
+        )}
       </div>
     </Section>
   );

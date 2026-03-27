@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { RoomDTO } from '@catspin/protocol';
 import type { PlayerView } from '../../types/playerView';
+import { Avatar } from '../common/Avatar';
 
 type WinScreenProps = {
   readonly room: RoomDTO | null;
@@ -49,13 +50,14 @@ export function WinScreen(props: WinScreenProps) {
   return (
     <div className="win-overlay">
       <div className="win-card">
-        <div className="win-label">Game finished</div>
+        <div className="label">Game finished</div>
 
-        <h2 className="win-title">🏆 Winner</h2>
+        <h2 className="title">🏆 Winner</h2>
 
-        <div className="win-player">
-          <div className="win-name">{winner.id === playerId ? 'You' : winner.name}</div>
-          <div className="win-balance">{winner.balance}</div>
+        <div className="player">
+          <Avatar value={winner.avatar} size="lg" mood="win" />
+          <div className="name">{winner.id === playerId ? 'You' : winner.name}</div>
+          <div className="balance">{winner.balance}</div>
         </div>
 
         <button onClick={onLeaveRoom}>Leave</button>
