@@ -15,21 +15,15 @@ export function PlayerItem({ player, isCurrent, isHost }: PlayerItemProps) {
       data-online={player.isConnected}
       data-eliminated={player.isEliminated}
     >
-      <Avatar size="md" value={player.avatar} />
+      <Avatar size="lg" value={player.avatar} isWin={!!player.lastWin} />
 
       <div className="player-content">
-        <div className="player-header">
-          <span className="player-name" title={player.name}>
-            {player.name}
-          </span>
-
-          <div className="player-badges">
+        <div className="player-top">
+          <div className="player-tags">
+            <span className="player-name">{player.name}</span>
             {isCurrent && <span className="badge">you</span>}
             {isHost && <span className="badge">host</span>}
             {player.isEliminated && <span className="badge is-danger">out</span>}
-            <span className={`badge ${player.isReady ? 'is-success' : ''}`}>
-              {player.isReady ? 'ready' : 'not ready'}
-            </span>
           </div>
 
           <span

@@ -67,8 +67,6 @@ export function NameScreen(props: NameScreenProps) {
         {AVATARS.map((item) => {
           const selected = avatar === item;
 
-          const mood = selected && isSubmitting ? 'win' : 'neutral';
-
           return (
             <button
               key={item}
@@ -77,7 +75,7 @@ export function NameScreen(props: NameScreenProps) {
               onClick={() => setAvatar(item)}
               disabled={isSubmitting}
             >
-              <Avatar size="lg" value={item} mood={mood} />
+              <Avatar size="lg" value={item} isWin={selected && isSubmitting} />
             </button>
           );
         })}

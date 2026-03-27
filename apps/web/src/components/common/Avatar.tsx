@@ -3,23 +3,17 @@ import { useEffect, useState } from 'react';
 type AvatarProps = {
   readonly value: string;
   readonly size?: 'sm' | 'md' | 'lg';
-  readonly mood?: 'neutral' | 'win' | 'lose';
+  readonly isWin?: boolean;
 };
 
 const PATH = '/assets/avatars';
 
-const SUFFIX = {
-  neutral: 'n',
-  win: 'w',
-  lose: 'l',
-};
-
-export function Avatar({ value, size = 'sm', mood = 'neutral' }: AvatarProps) {
-  const [currentMood, setCurrentMood] = useState(mood);
+export function Avatar({ value, size = 'sm', isWin = false }: AvatarProps) {
+  const [showWin, setShowWin] = useState(isWin);
 
   useEffect(() => {
-    if (mood === 'neutral') {
-      setCurrentMood('neutral');
+    if (!isWin) {
+      setShowWin(false);
       return;
     }
 
@@ -27,13 +21,13 @@ export function Avatar({ value, size = 'sm', mood = 'neutral' }: AvatarProps) {
 
     const interval = setInterval(() => {
       isAlt = !isAlt;
-      setCurrentMood(isAlt ? mood : 'neutral');
+      setShowWin(isAlt);
     }, 400);
 
     return () => clearInterval(interval);
-  }, [mood]);
+  }, [isWin]);
 
-  const suffix = SUFFIX[currentMood];
+  const suffix = showWin ? 'w' : 'n';
   const src = `${PATH}/${value}-${suffix}.png`;
 
   return (

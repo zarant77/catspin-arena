@@ -13,20 +13,104 @@
       inset: 0;
       display: grid;
       place-items: center;
-      background: radial-gradient(circle at top, #2b1d52, #09050f);
       color: #fff4d6;
       z-index: 9999;
       cursor: pointer;
+      opacity: 1;
+    }
+
+    #splash .background {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #splash .background div {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at top, #2b1d52, #09050f);
+      background-image: url(assets/splash-bg.jpg);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      will-change: transform, opacity, filter;
+    }
+
+    #splash .background .base {
+      filter: grayscale(100%);
+      transform: scale(1.02);
+    }
+
+    #splash .background .piece-0,
+    #splash .background .piece-1,
+    #splash .background .piece-2,
+    #splash .background .piece-3,
+    #splash .background .piece-4,
+    #splash .background .piece-5,
+    #splash .background .piece-6 {
+      opacity: 1;
+      transform: translateY(0) rotate(0deg);
+    }
+
+    /* top-left */
+    #splash .background .piece-0 {
+      clip-path: polygon(0% 0%, 60% 0%, 50% 35%, 20% 50%, 0% 40%);
+      transform-origin: 30% 20%;
+    }
+
+    /* top-right */
+    #splash .background .piece-1 {
+      clip-path: polygon(60% 0%, 100% 0%, 100% 35%, 75% 45%, 50% 35%);
+      transform-origin: 75% 20%;
+    }
+
+    /* mid-left */
+    #splash .background .piece-2 {
+      clip-path: polygon(0% 40%, 20% 50%, 35% 75%, 0% 80%);
+      transform-origin: 18% 58%;
+    }
+
+    /* center */
+    #splash .background .piece-3 {
+      clip-path: polygon(20% 50%, 50% 35%, 75% 45%, 65% 75%, 35% 75%);
+      transform-origin: 48% 58%;
+    }
+
+    /* bottom-left */
+    #splash .background .piece-4 {
+      clip-path: polygon(0% 80%, 35% 75%, 50% 100%, 0% 100%);
+      transform-origin: 22% 88%;
+    }
+
+    /* bottom-right */
+    #splash .background .piece-5 {
+      clip-path: polygon(35% 75%, 65% 75%, 100% 80%, 100% 100%, 50% 100%);
+      transform-origin: 72% 88%;
+    }
+
+    /* right-mid */
+    #splash .background .piece-6 {
+      clip-path: polygon(75% 45%, 100% 35%, 100% 80%, 65% 75%);
+      transform-origin: 84% 58%;
     }
 
     .splash-content {
+      position: absolute;
+      z-index: 2;
       text-align: center;
       animation: fadeIn 0.6s ease-out;
+      transition: opacity 400ms ease, transform 400ms ease;
     }
 
     .logo {
-      font-size: 72px;
-      margin-bottom: 10px;
+      margin: 0 auto 0 auto;
+      height: 260px;
+      display: block;
     }
 
     .title {
@@ -45,6 +129,105 @@
       opacity: 0.5;
     }
 
+    #splash.is-closing {
+      pointer-events: none;
+    }
+
+    #splash.is-closing .background .piece-0,
+    #splash.is-closing .background .piece-1,
+    #splash.is-closing .background .piece-2,
+    #splash.is-closing .background .piece-3,
+    #splash.is-closing .background .piece-4,
+    #splash.is-closing .background .piece-5,
+    #splash.is-closing .background .piece-6 {
+      animation-name: pieceFall;
+      animation-duration: 900ms;
+      animation-timing-function: cubic-bezier(0.22, 0.7, 0.18, 1);
+      animation-fill-mode: forwards;
+    }
+
+    #splash.is-closing .background .piece-0 {
+      animation-delay: 0ms;
+    }
+
+    #splash.is-closing .background .piece-1 {
+      animation-delay: 300ms;
+    }
+
+    #splash.is-closing .background .piece-2 {
+      animation-delay: 600ms;
+    }
+
+    #splash.is-closing .background .piece-3 {
+      animation-delay: 900ms;
+    }
+
+    #splash.is-closing .background .piece-6 {
+      animation-delay: 1200ms;
+    }
+
+    #splash.is-closing .background .piece-4 {
+      animation-delay: 1500ms;
+    }
+
+    #splash.is-closing .background .piece-5 {
+      animation-delay: 1800ms;
+    }
+
+    #splash.is-closing .background .piece-0 {
+      --fall-x: -40px;
+      --fall-rot: -10deg;
+    }
+
+    #splash.is-closing .background .piece-1 {
+      --fall-x: 36px;
+      --fall-rot: 12deg;
+    }
+
+    #splash.is-closing .background .piece-2 {
+      --fall-x: -28px;
+      --fall-rot: -8deg;
+    }
+
+    #splash.is-closing .background .piece-3 {
+      --fall-x: 10px;
+      --fall-rot: 6deg;
+    }
+
+    #splash.is-closing .background .piece-4 {
+      --fall-x: -18px;
+      --fall-rot: -5deg;
+    }
+
+    #splash.is-closing .background .piece-5 {
+      --fall-x: 24px;
+      --fall-rot: 8deg;
+    }
+
+    #splash.is-closing .background .piece-6 {
+      --fall-x: 30px;
+      --fall-rot: 10deg;
+    }
+
+    @keyframes pieceFall {
+      0% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) rotate(0deg);
+        filter: brightness(1);
+      }
+
+      12% {
+        opacity: 1;
+        transform: translate3d(calc(var(--fall-x) * 0.15), 8px, 0) rotate(calc(var(--fall-rot) * 0.2));
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate3d(var(--fall-x), 130vh, 0) rotate(var(--fall-rot));
+        filter: brightness(0.9);
+      }
+    }
+
     @keyframes fadeIn {
       from {
         opacity: 0;
@@ -61,8 +244,19 @@
 
 <body>
   <div id="splash">
+    <div class="background">
+      <div class="base"></div>
+      <div class="piece-0"></div>
+      <div class="piece-1"></div>
+      <div class="piece-2"></div>
+      <div class="piece-3"></div>
+      <div class="piece-4"></div>
+      <div class="piece-5"></div>
+      <div class="piece-6"></div>
+    </div>
+
     <div class="splash-content">
-      <div class="logo">🐱</div>
+      <img class="logo" src="assets/catemup_logo_square_transparent_softglow.png" alt="CatSpin Arena logo">
       <div class="title">CatSpin Arena</div>
       <div class="subtitle">Bet. Spin. Survive.</div>
       <div class="hint">Click to continue</div>
@@ -76,11 +270,9 @@
       const splash = document.getElementById('splash');
       let splashSound = null;
 
-      if (!localStorage.getItem('catspin.playerId')) {
-        splashSound = new Audio('./assets/welcome.mp3');
-        splashSound.preload = 'auto';
-        splashSound.volume = 1;
-      }
+      splashSound = new Audio('./assets/welcome.mp3');
+      splashSound.preload = 'auto';
+      splashSound.volume = 1;
 
       let isClosing = false;
 
@@ -90,23 +282,22 @@
         }
 
         isClosing = true;
-
-        const fadeOutAndRemove = () => {
-          splash.style.opacity = '0';
-          splash.style.transition = 'opacity 500ms ease';
-
-          window.setTimeout(() => {
-            splash.remove();
-            document.body.style.overflow = '';
-          }, 300);
-        };
+        splash.classList.add('is-closing');
 
         if (splashSound) {
           splashSound.currentTime = 0;
           splashSound.play().catch(() => { });
         }
 
-        setTimeout(() => fadeOutAndRemove(), 500);
+        window.setTimeout(() => {
+          splash.style.transition = 'opacity 500ms ease';
+          splash.style.opacity = '0';
+
+          window.setTimeout(() => {
+            splash.remove();
+            document.body.style.overflow = '';
+          }, 500);
+        }, 2600);
       }
 
       if (window.location.hash && window.location.hash.length > 1) {
