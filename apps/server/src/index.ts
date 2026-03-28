@@ -29,6 +29,34 @@ async function bootstrap(): Promise<void> {
 
   gameLoop.start();
 
+  let isShuttingDown = false;
+
+  const shutdown = async (signal: 'SIGINT' | 'SIGTERM'): Promise<void> => {
+    if (isShuttingDown === true) {
+      return;
+    }
+
+    isShuttingDown = true;
+    app.log.info({ signal }, 'Shutting down server');
+
+    try {
+      gameLoop.stop();
+      await app.close();
+      process.exit(0);
+    } catch (error) {
+      app.log.error({ error }, 'Failed to shut down cleanly');
+      process.exit(1);
+    }
+  };
+
+  process.once('SIGINT', () => {
+    void shutdown('SIGINT');
+  });
+
+  process.once('SIGTERM', () => {
+    void shutdown('SIGTERM');
+  });
+
   await app.listen({
     port: 3000,
     host: '0.0.0.0',

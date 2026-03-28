@@ -8,7 +8,10 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "sim": "pnpm exec tsx src/sim/cli.ts",
+    "sim:fast": "pnpm exec tsx src/sim/cli.ts --spins=10000 --bet=1",
+    "sim:rtp": "pnpm exec tsx src/sim/cli.ts --spins=100000 --bet=1"
   },
   "devDependencies": {
     "vitest": "^4.1.2"

@@ -48,32 +48,33 @@
 │     └─ vite.config.ts
 └─ packages
    ├─ core
-   │  └─ src
-   │     ├─ api
-   │     │  ├─ applyCommand.ts
-   │     │  ├─ createGame.ts
-   │     │  ├─ getPublicState.ts
-   │     │  └─ tickGame.ts
-   │     ├─ config
-   │     │  ├─ MathPresets
-   │     │  │  ├─ classic-high.ts
-   │     │  │  ├─ classic-low.ts
-   │     │  │  ├─ classic-medium.ts
-   │     │  │  ├─ high-rtp-test.ts
-   │     │  │  └─ index.ts
-   │     │  ├─ GameConfig.ts
-   │     │  ├─ MathConfig.ts
-   │     │  └─ MathRegistry.ts
-   │     ├─ engine
-   │     │  ├─ Payout.ts
-   │     │  ├─ RNG.ts
-   │     │  └─ SlotEngine.ts
-   │     ├─ game
-   │     │  ├─ GameState.ts
-   │     │  ├─ Player.ts
-   │     │  ├─ Round.ts
-   │     │  └─ Rules.ts
-   │     └─ index.ts
+   │  ├─ src
+   │  │  ├─ api
+   │  │  │  ├─ applyCommand.ts
+   │  │  │  ├─ createGame.ts
+   │  │  │  ├─ getPublicState.ts
+   │  │  │  └─ tickGame.ts
+   │  │  ├─ config
+   │  │  │  ├─ MathPresets
+   │  │  │  │  ├─ classic-high.ts
+   │  │  │  │  ├─ classic-low.ts
+   │  │  │  │  ├─ classic-medium.ts
+   │  │  │  │  ├─ high-rtp-test.ts
+   │  │  │  │  └─ index.ts
+   │  │  │  ├─ GameConfig.ts
+   │  │  │  ├─ MathConfig.ts
+   │  │  │  └─ MathRegistry.ts
+   │  │  ├─ engine
+   │  │  │  ├─ Payout.ts
+   │  │  │  ├─ RNG.ts
+   │  │  │  └─ SlotEngine.ts
+   │  │  ├─ game
+   │  │  │  ├─ GameState.ts
+   │  │  │  ├─ Player.ts
+   │  │  │  ├─ Round.ts
+   │  │  │  └─ Rules.ts
+   │  │  └─ index.ts
+   │  └─ vitest.config.ts
    ├─ protocol
    │  └─ src
    │     ├─ events
@@ -450,6 +451,8 @@ Types:
 - WinnerSelectionPolicy
 
 ### packages/core/src/index.ts
+
+### packages/core/vitest.config.ts
 
 ### packages/protocol/src/events/client.ts
 
