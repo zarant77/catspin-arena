@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@catspin/assets": "workspace:*",
     "@catspin/core": "workspace:*",
     "phaser": "^3.90.0"
   },

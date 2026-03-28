@@ -5,6 +5,14 @@ const PLAYER_ID = 'p1';
 let state = createGame({
   id: 'slot-demo',
   seed: 123,
+  config: {
+    targetBalance: 1000_000_000,
+    startBalance: 500,
+    minBet: 1,
+    maxBet: 100,
+    bettingDurationMs: 1000_000_000,
+    spinDurationMs: 2_000,
+  },
 });
 
 state = applyCommand(state, {
@@ -26,11 +34,11 @@ state = applyCommand(state, {
   now: performance.now(),
 });
 
-export function spin(): void {
+export function spin(amount = 1): void {
   state = applyCommand(state, {
     type: 'set_bet',
     playerId: PLAYER_ID,
-    amount: 1,
+    amount,
   });
 
   state = applyCommand(state, {

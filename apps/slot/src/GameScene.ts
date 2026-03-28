@@ -1,83 +1,130 @@
 import Phaser from 'phaser';
-import { spin, tick, getView } from './core';
+import { type SlotSymbolId } from '@catspin/assets';
+import { getView, spin, tick } from './core';
+import { SlotHud } from './slot/SlotHud';
+import { SlotMachine } from './slot/SlotMachine';
 
 export class GameScene extends Phaser.Scene {
-  private symbols: Phaser.GameObjects.Text[][] = [];
-  private spinButton!: Phaser.GameObjects.Text;
-  private lastGridKey = '';
+  private slotMachine!: SlotMachine;
+  private slotHud!: SlotHud;
+
+  private lastRoundStatus = '';
+  private lastResolvedKey = '';
 
   public constructor() {
-    super('Game');
+    super('GameScene');
+  }
+
+  public preload(): void {
+    this.slotMachine = new SlotMachine(this);
+    this.slotMachine.preload();
   }
 
   public create(): void {
-    // Create grid (5x3)
-    for (let x = 0; x < 5; x++) {
-      this.symbols[x] = [];
+    this.cameras.main.setBackgroundColor('#0b0615');
+    this.add.rectangle(640, 360, 1280, 720, 0x12081f);
 
-      for (let y = 0; y < 3; y++) {
-        const text = this.add.text(200 + x * 120, 150 + y * 100, '-', {
-          fontSize: '40px',
-          color: '#ffffff',
-        });
-
-        this.symbols[x][y] = text;
-      }
-    }
-
-    // Spin button
-    this.spinButton = this.add
-      .text(100, 500, 'SPIN', {
-        fontSize: '48px',
-        backgroundColor: '#2a1b3d',
-        padding: { x: 30, y: 15 },
+    this.add
+      .text(640, 60, 'CATSPIN SLOT', {
+        fontFamily: 'Arial',
+        fontSize: '42px',
+        color: '#ffd166',
+        fontStyle: 'bold',
       })
-      .setInteractive({ useHandCursor: true })
-      .on('pointerdown', () => {
-        spin();
-        this.playSpinAnimation();
-      });
+      .setOrigin(0.5);
 
-    this.render();
+    this.slotMachine.create();
+
+    this.slotHud = new SlotHud(this, () => {
+      const view = getView();
+
+      if (view.round.status !== 'betting') {
+        return;
+      }
+
+      spin(1);
+    });
+
+    this.slotHud.create();
+    this.renderStaticState();
   }
 
-  public update(): void {
+  public update(_time: number, delta: number): void {
     tick();
-    this.render();
+
+    const view = getView();
+    const roundStatus = view.round.status;
+
+    if (roundStatus !== this.lastRoundStatus) {
+      this.handleRoundStatusChanged(this.lastRoundStatus, roundStatus);
+      this.lastRoundStatus = roundStatus;
+    }
+
+    this.slotMachine.update(delta);
+
+    if (roundStatus === 'resolved' && view.round.result !== null) {
+      const key = JSON.stringify(view.round.result.grid);
+
+      if (key !== this.lastResolvedKey) {
+        this.lastResolvedKey = key;
+        this.slotMachine.applyResolvedGrid(view.round.result.grid as readonly (readonly SlotSymbolId[])[]);
+        this.playResolvedEffects();
+      }
+    }
+
+    this.renderStaticState();
   }
 
-  private render(): void {
+  private handleRoundStatusChanged(prevStatus: string, nextStatus: string): void {
+    if (prevStatus !== 'spinning' && nextStatus === 'spinning') {
+      this.slotMachine.startSpin();
+      return;
+    }
+
+    if (prevStatus === 'spinning' && nextStatus === 'resolved') {
+      this.slotMachine.scheduleStop();
+      return;
+    }
+
+    if (nextStatus === 'betting') {
+      this.slotHud.clearWinText();
+      this.lastResolvedKey = '';
+    }
+  }
+
+  private playResolvedEffects(): void {
     const view = getView();
-    const grid = view.round.result?.grid;
+    const result = view.round.result;
 
-    if (!grid) return;
+    if (result === null) {
+      return;
+    }
 
-    const key = JSON.stringify(grid);
+    if (result.totalMultiplier > 0) {
+      this.slotHud.playWinPulse();
 
-    // prevent constant redraw spam
-    if (key === this.lastGridKey) return;
+      for (const line of result.winningLines) {
+        const payline = view.config.paylines[line.lineIndex];
 
-    this.lastGridKey = key;
-
-    for (let x = 0; x < grid.length; x++) {
-      for (let y = 0; y < grid[x].length; y++) {
-        this.symbols[x][y].setText(grid[x][y]);
+        if (payline !== undefined) {
+          this.slotMachine.highlightWinningLine(payline);
+        }
       }
     }
   }
 
-  private playSpinAnimation(): void {
-    this.symbols.forEach((col, x) => {
-      col.forEach((symbol, y) => {
-        this.tweens.add({
-          targets: symbol,
-          y: symbol.y + 40,
-          duration: 100,
-          yoyo: true,
-          ease: 'Quad.easeInOut',
-          delay: x * 100,
-        });
-      });
+  private renderStaticState(): void {
+    const view = getView();
+    const player = view.players[0];
+    const result = view.round.result;
+
+    const winText = result === null ? '' : result.totalMultiplier > 0 ? `WIN x${result.totalMultiplier}` : 'NO WIN';
+
+    this.slotHud.render({
+      roundStatus: view.round.status,
+      balance: player?.balance ?? 0,
+      winText: view.round.status === 'betting' ? '' : winText,
+      canSpin: view.round.status === 'betting',
     });
   }
 }

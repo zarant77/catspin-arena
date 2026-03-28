@@ -64,6 +64,9 @@ importers:
 
   apps/slot:
     dependencies:
+      '@catspin/assets':
+        specifier: workspace:*
+        version: link:../../packages/assets
       '@catspin/core':
         specifier: workspace:*
         version: link:../../packages/core
