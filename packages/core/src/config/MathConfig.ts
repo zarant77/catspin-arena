@@ -8,6 +8,12 @@ export type MathStats = {
   readonly estimatedVolatilityIndex?: number;
 };
 
+export type MathProfileOption = {
+  readonly id: MathProfileId;
+  readonly label: string;
+  readonly stats?: MathStats;
+};
+
 export type SlotMathConfig = {
   readonly id: MathProfileId;
   readonly label: string;

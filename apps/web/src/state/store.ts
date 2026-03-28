@@ -1,5 +1,6 @@
+import type { MathProfileId, MathProfileOption } from '@catspin/core';
 import type { RoomDTO } from '@catspin/protocol';
-import { createRoom as createRoomRequest } from '../api/rooms';
+import { createRoom as createRoomRequest, getMathProfiles } from '../api/rooms';
 import { createRealtimeClient, type RealtimeClient } from '../network/client';
 import type { SocketStatus } from '../network/socket';
 import { getStoredPlayerInfo, savePlayerInfo } from '../utils/playerInfo';
@@ -7,6 +8,10 @@ import { getStoredPlayerInfo, savePlayerInfo } from '../utils/playerInfo';
 export type FooterState = {
   primaryText: string;
   secondaryText?: string;
+};
+
+export type CreateRoomOptions = {
+  readonly mathProfileId?: MathProfileId;
 };
 
 export type ClientStoreState = {
@@ -19,6 +24,7 @@ export type ClientStoreState = {
   error: string | null;
   footer: FooterState;
   serverTimeOffsetMs: number;
+  mathProfiles: readonly MathProfileOption[];
 };
 
 export type ClientStore = {
@@ -26,8 +32,9 @@ export type ClientStore = {
   subscribe: (listener: () => void) => () => void;
   connect: () => void;
   disconnect: () => void;
+  loadMathProfiles: () => Promise<void>;
   setPlayerInfo: (name: string, avatar: string) => void;
-  createRoom: () => Promise<string>;
+  createRoom: (options?: CreateRoomOptions) => Promise<string>;
   joinRoom: (args: { roomId: string; name: string; avatar: string }) => void;
   leaveRoom: () => void;
   setReady: (ready: boolean) => void;
@@ -60,6 +67,7 @@ export function createClientStore(options: CreateClientStoreOptions): ClientStor
     error: null,
     footer: EMPTY_FOOTER,
     serverTimeOffsetMs: 0,
+    mathProfiles: [],
   };
 
   const listeners = new Set<() => void>();
@@ -133,6 +141,23 @@ export function createClientStore(options: CreateClientStoreOptions): ClientStor
       client.disconnect();
     },
 
+    loadMathProfiles: async () => {
+      try {
+        const mathProfiles = await getMathProfiles();
+
+        setState({
+          mathProfiles,
+          error: null,
+        });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Failed to load math profiles';
+
+        setState({
+          error: message,
+        });
+      }
+    },
+
     setPlayerInfo: (name: string, avatar: string) => {
       savePlayerInfo(name, avatar);
 
@@ -142,8 +167,10 @@ export function createClientStore(options: CreateClientStoreOptions): ClientStor
       });
     },
 
-    createRoom: async () => {
-      const result = await createRoomRequest();
+    createRoom: async (options) => {
+      const result = await createRoomRequest({
+        mathProfileId: options?.mathProfileId,
+      });
 
       setState({
         roomId: result.roomId,

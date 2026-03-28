@@ -47,7 +47,7 @@ Symbols:
 
 `L1`, `L2`, `L3`, `L4`, `M1`, `M2`, `H1`, `H2`
 
-Status: **stable**
+Status: **stable (production-ready core, unchanged)**
 
 ---
 
@@ -96,7 +96,7 @@ Implemented:
 - disconnect vs leave separation
 - online/offline state derived from sessions
 
-Status: **working (stable core loop)**
+Status: **stable (core loop solid, not heavily load-tested yet)**
 
 ---
 
@@ -122,13 +122,22 @@ Implemented:
 - create / join / leave flows
 - reconnect using persisted playerId
 
-In progress:
+### Slot UI / Game Rendering
+
+Implemented:
 
 - slot machine rendering
 - spin animation
+- win animation
+- highlight of winning lines
 - result visualization
 
-Status: **working + actively evolving**
+### UX / UI
+
+- UI polished and usable
+- mobile-friendly layout
+
+Status: **feature-complete (visual layer ready)**
 
 ---
 
@@ -158,6 +167,8 @@ Verified:
 - betting → spinning → resolved loop
 - multiple players interaction
 
+Status: **tested manually, stable in real usage**
+
 ---
 
 ## Current Limitations
@@ -165,22 +176,24 @@ Verified:
 - no DB / persistence
 - no auth
 - no reconnect grace timeout
-- no animations yet
-- no polished UI
-- no sound
+- no automated tests
+- no load testing
+- no bots / simulation
 - leave = permanent exit (no rejoin mid-game)
 
 ---
 
 ## Next Steps
 
-### Gameplay / UX
+### Testing / Quality
 
-- slot reel rendering
-- spin animation synced with server
-- highlight winning lines
-- show multipliers and wins
-- add sound effects
+- unit tests for core
+- integration tests for server flow
+
+### Simulation
+
+- bot players
+- automated gameplay simulation (stress testing)
 
 ### Networking
 
@@ -188,24 +201,32 @@ Verified:
 - better reconnect UX ("reconnecting...")
 - optional spectator mode
 
-### UI
+### Polish
 
-- redesign lobby layout
-- player cards
-- animations and feedback
-- mobile adaptation
-
-### Quality
-
-- unit tests for core
-- integration tests for server flow
+- sound effects
+- additional feedback (UI/UX juice)
 
 ---
 
 ## Status Summary
 
-- Core: **stable**
+- Core: **stable (production-ready)**
 - Protocol: **stable**
-- Server: **working**
-- Web: **working prototype**
-- Overall: **game loop + networking solid; focus now on visuals and feel**
+- Server: **stable (needs load testing)**
+- Web: **feature-complete**
+- Gameplay: **playable & fun**
+- Testing: **missing**
+
+---
+
+## Overall
+
+👉 The project has a **solid architecture and working gameplay loop**.
+
+The focus has shifted from:
+
+> "making it work"
+
+to:
+
+> "making it robust, testable, and scalable"

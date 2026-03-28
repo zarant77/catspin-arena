@@ -3,6 +3,7 @@ import type { PlayerDTO } from './PlayerDTO';
 export type GameStatusDTO = 'lobby' | 'running' | 'finished';
 export type RoundStatusDTO = 'idle' | 'presenting' | 'betting' | 'spinning' | 'resolved';
 export type SymbolIdDTO = 'L1' | 'L2' | 'L3' | 'L4' | 'M1' | 'M2' | 'H1' | 'H2';
+export type MathProfileIdDTO = 'classic-low' | 'classic-medium' | 'classic-high' | 'high-rtp-test';
 
 export type PaylineDTO = number[];
 
@@ -37,6 +38,7 @@ export type RoundDTO = {
 };
 
 export type GameConfigDTO = {
+  readonly mathProfileId: MathProfileIdDTO;
   readonly minBet: number;
   readonly maxBet: number;
   readonly bettingDurationMs: number;

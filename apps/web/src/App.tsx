@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { MathProfileId } from '@catspin/core';
 import type { RoomDTO } from '@catspin/protocol';
 import { initAudio, playMusic, unlockAudio } from './audio';
 import { useClientStore, useClientStoreState } from './state/storeContext';
@@ -45,6 +46,7 @@ export default function App() {
   const state = useClientStoreState();
 
   const [roomInput, setRoomInput] = useState<string>(() => getRoomIdFromHash() ?? '');
+  const [selectedMathProfileId, setSelectedMathProfileId] = useState<MathProfileId>('classic-high');
   const [isNameScreenOpen, setIsNameScreenOpen] = useState<boolean>(() => {
     return (state.playerName?.trim().length ?? 0) === 0;
   });
@@ -72,6 +74,26 @@ export default function App() {
       setIsNameScreenOpen(true);
     }
   }, [trimmedPlayerName]);
+
+  useEffect(() => {
+    store.loadMathProfiles().catch((error) => {
+      console.error('Failed to load math profiles', error);
+    });
+  }, [store]);
+
+  useEffect(() => {
+    if (state.mathProfiles.length === 0) {
+      return;
+    }
+
+    const hasSelectedProfile = state.mathProfiles.some((profile) => profile.id === selectedMathProfileId);
+
+    if (hasSelectedProfile === true) {
+      return;
+    }
+
+    setSelectedMathProfileId(state.mathProfiles[0].id);
+  }, [state.mathProfiles, selectedMathProfileId]);
 
   useEffect(() => {
     const handleHashChange = (): void => {
@@ -106,7 +128,7 @@ export default function App() {
       name,
       avatar,
     });
-  }, [state.connectionStatus, state.playerName, state.room, isNameScreenOpen, store]);
+  }, [state.connectionStatus, state.playerName, state.playerAvatar, state.room, isNameScreenOpen, store]);
 
   useEffect(() => {
     if (state.room !== null) {
@@ -152,7 +174,10 @@ export default function App() {
     if (name.length === 0) return;
 
     try {
-      const roomId = await store.createRoom();
+      const roomId = await store.createRoom({
+        mathProfileId: selectedMathProfileId,
+      });
+
       setRoomIdHash(roomId);
       setRoomInput(roomId);
 
@@ -212,10 +237,13 @@ export default function App() {
           {!isNameScreenOpen && screen === 'room_setup' && (
             <RoomSetupScreen
               roomInput={roomInput}
+              selectedMathProfileId={selectedMathProfileId}
+              mathProfileOptions={state.mathProfiles}
               onRoomInputChange={(value) => {
                 setRoomInput(value);
                 autoJoinAttemptedRef.current = false;
               }}
+              onMathProfileChange={setSelectedMathProfileId}
               onCreateRoom={handleCreateRoom}
               onJoinRoom={handleJoinRoom}
               canCreate={canCreate}

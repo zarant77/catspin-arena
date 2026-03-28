@@ -1,7 +1,9 @@
+import type { MathProfileId } from '../config/MathConfig';
 import type { GameState } from '../game/GameState';
 import type { GameStatus, Payline, RoundStatus, SymbolId } from '../game/Rules';
 
 export type PublicGameConfig = {
+  readonly mathProfileId: MathProfileId;
   readonly minBet: number;
   readonly maxBet: number;
   readonly bettingDurationMs: number;
@@ -102,6 +104,7 @@ export function getPublicState(state: GameState): PublicGameState {
       payoutAmount: state.round.payoutAmount,
     },
     config: {
+      mathProfileId: state.config.mathProfileId,
       minBet: state.config.minBet,
       maxBet: state.config.maxBet,
       bettingDurationMs: state.config.bettingDurationMs,

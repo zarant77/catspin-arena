@@ -5,17 +5,20 @@ export default defineConfig({
   plugins: [react()],
 
   server: {
-    host: '0.0.0.0', // allow access from local network
+    host: '0.0.0.0',
     port: 5173,
 
     proxy: {
-      // HTTP → Fastify
       '/rooms': {
         target: 'http://localhost:3000',
         changeOrigin: true,
       },
 
-      // WebSocket → ws server
+      '/math-profiles': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+
       '/ws': {
         target: 'ws://localhost:3000',
         ws: true,

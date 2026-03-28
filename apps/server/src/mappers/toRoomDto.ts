@@ -28,6 +28,7 @@ export function toGameStateDto(args: { game: PublicGameState; serverNow: number 
       payoutAmount: game.round.payoutAmount,
     },
     config: {
+      mathProfileId: game.config.mathProfileId,
       minBet: game.config.minBet,
       maxBet: game.config.maxBet,
       bettingDurationMs: game.config.bettingDurationMs,

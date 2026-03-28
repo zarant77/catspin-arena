@@ -10,7 +10,7 @@ export {
   DEFAULT_ROUND_RULES,
   DEFAULT_MATH_PROFILE_ID,
 } from './config/GameConfig';
-export { getMathConfig, getAllMathConfigs } from './config/MathRegistry';
+export { getMathConfig, getAllMathConfigs, getMathProfileOptions } from './config/MathRegistry';
 export { CLASSIC_LOW_MATH, CLASSIC_MEDIUM_MATH, CLASSIC_HIGH_MATH } from './config/MathPresets';
 
 export { RNG } from './engine/RNG';
@@ -46,4 +46,4 @@ export type {
   TiePayoutPolicy,
   PayoutBasePolicy,
 } from './game/Rules';
-export type { MathProfileId, MathStats, SlotMathConfig } from './config/MathConfig';
+export type { MathProfileId, MathProfileOption, MathStats, SlotMathConfig } from './config/MathConfig';

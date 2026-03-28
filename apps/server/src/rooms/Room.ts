@@ -5,6 +5,7 @@ import {
   tickGame,
   type GameCommand,
   type GameState,
+  type MathProfileId,
   type PublicGameState,
 } from '@catspin/core';
 
@@ -25,11 +26,14 @@ export class Room {
   private readonly sessionsByPlayerId: Map<string, PlayerSession>;
   private readonly subscribers: Set<RoomSubscriber>;
 
-  public constructor(args: { id: string; seed: number }) {
+  public constructor(args: { id: string; seed: number; mathProfileId?: MathProfileId }) {
     this.id = args.id;
     this.state = createGame({
       id: args.id,
       seed: args.seed,
+      config: {
+        mathProfileId: args.mathProfileId,
+      },
     });
     this.sessionsByPlayerId = new Map<string, PlayerSession>();
     this.subscribers = new Set<RoomSubscriber>();

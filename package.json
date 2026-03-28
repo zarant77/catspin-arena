@@ -10,6 +10,7 @@
     "dev:web": "pnpm --filter @catspin/web dev",
     "preview:web": "pnpm --filter @catspin/web preview",
     "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r --if-present test",
     "structure": "node tools/structure.mjs",
     "format:check": "prettier . --check",
     "format:fix": "prettier . --write",

@@ -1,6 +1,11 @@
+import type { MathProfileId } from '@catspin/core';
 import { randomId } from '@catspin/shared';
 
 import { Room } from './Room';
+
+type CreateRoomOptions = {
+  readonly mathProfileId?: MathProfileId;
+};
 
 export class RoomManager {
   private readonly roomsById: Map<string, Room>;
@@ -9,7 +14,7 @@ export class RoomManager {
     this.roomsById = new Map<string, Room>();
   }
 
-  public createRoom(roomId?: string): Room {
+  public createRoom(roomId?: string, options?: CreateRoomOptions): Room {
     const id = roomId ?? this.generateUniqueRoomId();
     const existingRoom = this.roomsById.get(id);
 
@@ -22,6 +27,7 @@ export class RoomManager {
     const room = new Room({
       id,
       seed,
+      mathProfileId: options?.mathProfileId,
     });
 
     this.roomsById.set(id, room);

@@ -22,7 +22,7 @@ export function LobbyScreen(props: LobbyScreenProps) {
 
   return (
     <Section
-      title={`Room ${room.id}`}
+      title={`Room ${room.id} · ${room.game.config.mathProfileId}`}
       className="lobby"
       actions={
         <>

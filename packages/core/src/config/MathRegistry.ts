@@ -1,4 +1,4 @@
-import type { MathProfileId, SlotMathConfig } from './MathConfig';
+import type { MathProfileId, MathProfileOption, SlotMathConfig } from './MathConfig';
 import { CLASSIC_HIGH_MATH, CLASSIC_LOW_MATH, CLASSIC_MEDIUM_MATH, HIGH_RTP_TEST } from './MathPresets';
 
 const REGISTRY: Readonly<Record<MathProfileId, SlotMathConfig>> = {
@@ -14,4 +14,12 @@ export function getMathConfig(profileId: MathProfileId): SlotMathConfig {
 
 export function getAllMathConfigs(): readonly SlotMathConfig[] {
   return Object.values(REGISTRY);
+}
+
+export function getMathProfileOptions(): readonly MathProfileOption[] {
+  return Object.values(REGISTRY).map((config) => ({
+    id: config.id,
+    label: config.label,
+    stats: config.stats,
+  }));
 }

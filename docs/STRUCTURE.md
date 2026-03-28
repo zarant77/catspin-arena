@@ -108,6 +108,9 @@ Exported Functions:
 Internal Functions:
 - createRoomId()
 
+Types:
+- CreateRoomBody
+
 ### apps/server/src/index.ts
 
 Internal Functions:
@@ -141,6 +144,9 @@ Types:
 Classes:
 - RoomManager
 
+Types:
+- CreateRoomOptions
+
 ### apps/server/src/ws/handlers/index.ts
 
 Exported Functions:
@@ -169,10 +175,13 @@ Exported Functions:
 ### apps/web/src/api/rooms.ts
 
 Exported Functions:
-- createRoom()
+- createRoom(request)
+- getMathProfiles()
 
 Types:
+- CreateRoomRequest
 - CreateRoomResponse
+- GetMathProfilesResponse
 
 ### apps/web/src/audio/audio.ts
 
@@ -259,6 +268,7 @@ Types:
 - ClientStore
 - ClientStoreState
 - CreateClientStoreOptions
+- CreateRoomOptions
 - FooterState
 
 ### apps/web/src/types/playerView.ts
@@ -353,6 +363,7 @@ Types:
 
 Types:
 - MathProfileId
+- MathProfileOption
 - MathStats
 - SlotMathConfig
 
@@ -371,6 +382,7 @@ Types:
 Exported Functions:
 - getAllMathConfigs()
 - getMathConfig(profileId)
+- getMathProfileOptions()
 
 ### packages/core/src/engine/Payout.ts
 
@@ -467,6 +479,7 @@ Types:
 - GameConfigDTO
 - GameStateDTO
 - GameStatusDTO
+- MathProfileIdDTO
 - PaylineDTO
 - PaylinePresentationConfigDTO
 - RoundDTO
