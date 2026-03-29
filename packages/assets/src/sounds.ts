@@ -6,9 +6,9 @@ import win from '../sfx/win.wav';
 import meow from '../sfx/meow.wav';
 
 import mainTheme from '../music/Meowami-CatCity.mp3';
-import mainThemeMix1 from '../music/Meowami-CatCity-remix1.mp3';
-import mainThemeMix2 from '../music/Meowami-CatCity-remix2.mp3';
-import mainThemeMix3 from '../music/Meowami-CatCity-remix3.mp3';
+// import mainThemeMix1 from '../music/Meowami-CatCity-remix1.mp3';
+// import mainThemeMix2 from '../music/Meowami-CatCity-remix2.mp3';
+// import mainThemeMix3 from '../music/Meowami-CatCity-remix3.mp3';
 
 export type SoundDefinition = {
   readonly src: string;
@@ -44,18 +44,18 @@ export const sounds = {
     src: mainTheme,
     volume: 0.5,
   },
-  main_theme_mix1: {
-    src: mainThemeMix1,
-    volume: 0.5,
-  },
-  main_theme_mix2: {
-    src: mainThemeMix2,
-    volume: 0.5,
-  },
-  main_theme_mix3: {
-    src: mainThemeMix3,
-    volume: 0.5,
-  },
+  // main_theme_mix1: {
+  //   src: mainThemeMix1,
+  //   volume: 0.5,
+  // },
+  // main_theme_mix2: {
+  //   src: mainThemeMix2,
+  //   volume: 0.5,
+  // },
+  // main_theme_mix3: {
+  //   src: mainThemeMix3,
+  //   volume: 0.5,
+  // },
 } as const satisfies Record<string, SoundDefinition>;
 
 export type SoundId = keyof typeof sounds;

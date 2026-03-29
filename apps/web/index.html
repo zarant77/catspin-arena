@@ -4,10 +4,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="CatSpin Arena" />
+  <meta property="og:description" content="Bet. Spin. Survive. Multiplayer PvP slot arena." />
+  <meta property="og:image" content="https://catspin.catemup.com/img/og-image.jpg" />
+  <meta property="og:url" content="https://catspin.catemup.com" />
+  <meta property="og:type" content="website" />
+
   <title>CatSpin Arena</title>
-  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg" />
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg" />
 
   <style>
+    html,
+    body {
+      background: #000000;
+      color: #ffffff;
+    }
+
     #splash {
       position: fixed;
       inset: 0;
@@ -17,6 +31,10 @@
       z-index: 9999;
       cursor: pointer;
       opacity: 1;
+    }
+
+    #splash:not(.is-ready) {
+      cursor: default;
     }
 
     #splash .background {
@@ -34,7 +52,7 @@
       width: 100%;
       height: 100%;
       background: radial-gradient(circle at top, #2b1d52, #09050f);
-      background-image: url(assets/img/splash-bg.jpg);
+      background-image: url(img/splash-bg.jpg);
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -123,14 +141,56 @@
 
     .subtitle {
       margin-top: 8px;
-      opacity: 0.9;
+      opacity: 0;
       font-size: clamp(16px, 4.5vw, 26px);
+    }
+
+    #splash.is-ready .hint,
+    #splash.is-ready .subtitle {
+      opacity: 0.9;
+    }
+
+    .spinner-wrap {
+      position: absolute;
+      left: 50%;
+      bottom: clamp(48px, 5vh, 100px);
+      transform: translateX(-50%);
+    }
+
+    .spinner {
+      width: 42px;
+      height: 42px;
+
+      border-radius: 50%;
+      border: 3px solid rgba(255, 255, 255, 0.12);
+      border-top-color: #8b5cf6;
+
+      animation: spin 0.8s linear infinite;
+
+      box-shadow:
+        0 0 10px rgba(139, 92, 246, 0.6),
+        0 0 20px rgba(139, 92, 246, 0.3);
+
+      opacity: 1;
+      transition:
+        opacity 300ms ease,
+        transform 300ms ease;
+    }
+
+    #splash.is-ready .spinner {
+      opacity: 0;
+      transform: scale(0.8);
     }
 
     .hint {
       margin-top: 20px;
-      opacity: 0.7;
+      opacity: 0;
       font-size: clamp(13px, 3.5vw, 18px);
+      transition: opacity 300ms ease;
+    }
+
+    #splash.is-ready .hint {
+      opacity: 0.7;
     }
 
     #splash.is-closing {
@@ -244,6 +304,12 @@
       }
     }
 
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
     @media (orientation: landscape) {
       .splash-content {
         inset: 0;
@@ -268,6 +334,7 @@
       }
 
       .subtitle,
+      .spinner,
       .hint {
         position: absolute;
         left: 50%;
@@ -277,12 +344,18 @@
 
       .subtitle {
         font-size: clamp(14px, 1.6vw, 28px);
-        bottom: clamp(50px, 6vh, 120px);
+        bottom: clamp(90px, 10vh, 170px);
+      }
+
+      .spinner {
+        bottom: clamp(48px, 5vh, 100px);
+        margin: 0;
       }
 
       .hint {
         font-size: clamp(12px, 1.2vw, 20px);
         bottom: clamp(20px, 3vh, 60px);
+        margin: 0;
       }
     }
   </style>
@@ -302,10 +375,13 @@
     </div>
 
     <div class="splash-content">
-      <img class="catemup-logo" src="assets/img/catemup_logo_square_transparent_softglow.png" alt="CatEmUp logo">
-      <img class="catspin-logo" src="assets/img/catspin_arena_logo.png" alt="CatSpin Arena logo">
+      <img class="catemup-logo" src="img/catemup_logo_square_transparent_softglow.png" alt="CatEmUp logo">
+      <img class="catspin-logo" src="img/catspin_arena_logo.png" alt="CatSpin Arena logo">
       <div class="subtitle">Bet. Spin. Survive.</div>
       <div class="hint">Click to continue</div>
+      <div class="spinner-wrap">
+        <div class="spinner"></div>
+      </div>
     </div>
   </div>
 
@@ -313,7 +389,7 @@
 
   <script>
     (function () {
-      const SFW_PATH = './assets/sfx';
+      const SFW_PATH = './sfx';
       const splash = document.getElementById('splash');
 
       if (!splash) {
@@ -330,6 +406,7 @@
       const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
       let isClosing = false;
+      let isReady = false;
       let welcomeAudio = null;
       let impactBuffer = null;
 
@@ -413,6 +490,11 @@
         return;
       }
 
+      window.addEventListener('catspin:assets-ready', () => {
+        isReady = true;
+        splash.classList.add('is-ready');
+      });
+
       initAudio().catch(() => {
         welcomeAudio = new Audio(`${SFW_PATH}/welcome.wav`);
         welcomeAudio.preload = 'auto';
@@ -421,6 +503,10 @@
       });
 
       splash.addEventListener('click', () => {
+        if (!isReady) {
+          return;
+        }
+
         removeSplash().catch(() => { });
       });
     })();

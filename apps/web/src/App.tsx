@@ -145,7 +145,7 @@ export default function App() {
       window.removeEventListener('pointerdown', unlock);
     };
 
-    setTimeout(() => playMusic(['main_theme', 'main_theme_mix1', 'main_theme_mix2', 'main_theme_mix3']), 6000);
+    setTimeout(() => playMusic('main_theme'), 6000);
 
     window.addEventListener('pointerdown', unlock, { once: true });
 

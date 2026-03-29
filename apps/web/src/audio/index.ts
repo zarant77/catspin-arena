@@ -15,4 +15,4 @@ export {
   stopMusic,
 } from './audio';
 
-export type { SoundId } from './sounds';
+export type { SoundId } from '@catspin/assets';

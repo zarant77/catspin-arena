@@ -21,6 +21,15 @@
 │  │     │  │  └─ index.ts
 │  │     │  └─ server.ts
 │  │     └─ index.ts
+│  ├─ slot
+│  │  ├─ src
+│  │  │  ├─ slot
+│  │  │  │  ├─ SlotHud.ts
+│  │  │  │  └─ SlotMachine.ts
+│  │  │  ├─ core.ts
+│  │  │  ├─ GameScene.ts
+│  │  │  └─ main.ts
+│  │  └─ vite.config.ts
 │  └─ web
 │     ├─ src
 │     │  ├─ api
@@ -30,11 +39,8 @@
 │     │  │  ├─ index.ts
 │     │  │  └─ sounds.ts
 │     │  ├─ components
-│     │  │  ├─ common
-│     │  │  │  └─ animatedFavicon.ts
-│     │  │  └─ screens
-│     │  │     └─ game
-│     │  │        └─ slotSymbols.ts
+│     │  │  └─ common
+│     │  │     └─ animatedFavicon.ts
 │     │  ├─ network
 │     │  │  ├─ client.ts
 │     │  │  └─ socket.ts
@@ -47,6 +53,12 @@
 │     │     └─ roomHash.ts
 │     └─ vite.config.ts
 └─ packages
+   ├─ assets
+   │  └─ src
+   │     ├─ avatars.ts
+   │     ├─ index.ts
+   │     ├─ slots.ts
+   │     └─ sounds.ts
    ├─ core
    │  ├─ src
    │  │  ├─ api
@@ -73,6 +85,11 @@
    │  │  │  ├─ Player.ts
    │  │  │  ├─ Round.ts
    │  │  │  └─ Rules.ts
+   │  │  ├─ sim
+   │  │  │  ├─ cli.ts
+   │  │  │  ├─ index.ts
+   │  │  │  ├─ simulateSpins.ts
+   │  │  │  └─ types.ts
    │  │  └─ index.ts
    │  └─ vitest.config.ts
    ├─ protocol
@@ -173,6 +190,43 @@ Types:
 Exported Functions:
 - attachWebSocketServer(app, roomManager)
 
+### apps/slot/src/GameScene.ts
+
+Classes:
+- GameScene
+
+### apps/slot/src/core.ts
+
+Exported Functions:
+- getView()
+- spin(amount)
+- tick()
+
+### apps/slot/src/main.ts
+
+### apps/slot/src/slot/SlotHud.ts
+
+Classes:
+- SlotHud
+
+Types:
+- SlotHudState
+
+### apps/slot/src/slot/SlotMachine.ts
+
+Classes:
+- SlotMachine
+
+Internal Functions:
+- getCellX(reelIndex)
+- getCellY(rowIndex)
+- randomSymbol()
+
+Types:
+- ReelCell
+
+### apps/slot/vite.config.ts
+
 ### apps/web/src/api/rooms.ts
 
 Exported Functions:
@@ -230,11 +284,6 @@ Exported Functions:
 Internal Functions:
 - createGoldenPawSvg(size, angle)
 - getOrCreateFaviconLink()
-
-### apps/web/src/components/screens/game/slotSymbols.ts
-
-Types:
-- SlotSymbolId
 
 ### apps/web/src/network/client.ts
 
@@ -294,6 +343,27 @@ Internal Functions:
 - buildUrlWithoutHash()
 
 ### apps/web/vite.config.ts
+
+### packages/assets/src/avatars.ts
+
+Exported Functions:
+- getAvatar(value, mood)
+
+Types:
+- AvatarMood
+
+### packages/assets/src/index.ts
+
+### packages/assets/src/slots.ts
+
+Types:
+- SlotSymbolId
+
+### packages/assets/src/sounds.ts
+
+Types:
+- SoundDefinition
+- SoundId
 
 ### packages/core/src/api/applyCommand.ts
 
@@ -451,6 +521,37 @@ Types:
 - WinnerSelectionPolicy
 
 ### packages/core/src/index.ts
+
+### packages/core/src/sim/cli.ts
+
+Internal Functions:
+- formatPercent(value)
+- main()
+- parseArgs(argv)
+
+Types:
+- ParsedArgs
+
+### packages/core/src/sim/index.ts
+
+### packages/core/src/sim/simulateSpins.ts
+
+Exported Functions:
+- simulateSpins(options)
+
+Internal Functions:
+- createEmptySymbolCounts()
+- normalizeBetAmount(value, config)
+- normalizeSeed(value)
+- normalizeSpins(value)
+- toSortedWinDistribution(values)
+
+### packages/core/src/sim/types.ts
+
+Types:
+- SimulationOptions
+- SimulationSummary
+- WinDistributionEntry
 
 ### packages/core/vitest.config.ts
 
