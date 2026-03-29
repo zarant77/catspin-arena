@@ -36,7 +36,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url('/assets/img/coin.png');
+  background-image: url('/img/coin.png');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
