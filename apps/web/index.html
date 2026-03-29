@@ -334,7 +334,6 @@
       }
 
       .subtitle,
-      .spinner,
       .hint {
         position: absolute;
         left: 50%;
@@ -482,12 +481,6 @@
             playWelcome();
           }, splashFadeDurationMs);
         }, splashFadeDelayMs);
-      }
-
-      if (window.location.hash && window.location.hash.length > 1) {
-        splash.remove();
-        document.body.style.overflow = '';
-        return;
       }
 
       window.addEventListener('catspin:assets-ready', () => {
