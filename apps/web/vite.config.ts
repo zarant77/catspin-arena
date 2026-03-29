@@ -7,7 +7,10 @@ export default defineConfig({
 
   resolve: {
     alias: {
-      '@assets': path.resolve(__dirname, '../../packages/assets'),
+      '@catspin/core': path.resolve(__dirname, '../../packages/core/src/index.ts'),
+      '@catspin/assets': path.resolve(__dirname, '../../packages/assets/src/index.ts'),
+      '@catspin/shared': path.resolve(__dirname, '../../packages/shared/src/index.ts'),
+      '@catspin/protocol': path.resolve(__dirname, '../../packages/protocol/src/index.ts'),
     },
   },
 
